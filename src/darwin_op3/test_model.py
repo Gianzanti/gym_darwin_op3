@@ -71,6 +71,9 @@ class TestModel(unittest.TestCase):
                 if data.ctrl[16] > target_right_ankle: # -0.25
                     data.ctrl[16] -= velocity
 
+                # print sensor data
+                print(data.sensordata)
+
 
                 # mj_step can be replaced with code that also evaluates
                 # a policy and applies a control signal before stepping the physics.

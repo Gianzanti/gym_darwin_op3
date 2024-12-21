@@ -1,0 +1,17 @@
+from gymnasium.envs.registration import find_highest_version, register
+
+env_name = "DarwinOp3"
+env_version = 0
+env = f"gymnasium_env/{env_name}-v{env_version}"
+
+env_id = find_highest_version(ns=None, name=env_name)
+
+if env_id is None:
+    # Register this module as a gym environment. Once registered, the id is usable in gym.make().
+    register(
+        id=env,
+        entry_point="darwin_op3.env.darwin_env:DarwinEnv",
+        nondeterministic=True,
+    )
+    print(f"Registered environment {env}")
+
