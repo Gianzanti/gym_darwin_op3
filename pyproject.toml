@@ -1,0 +1,15 @@
+[project]
+name = "darwin-op3"
+version = "0.1.0"
+description = "Darwin OP3 Gym MuJoCo Environment"
+readme = "README.md"
+authors = [{ name = "Fabio Gianzanti", email = "pardal@hotmail.com" }]
+requires-python = ">=3.10"
+dependencies = ["gymnasium>=1.0.0"]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[dependency-groups]
+dev = ["imageio>=2.36.1", "mujoco>=3.2.6"]
