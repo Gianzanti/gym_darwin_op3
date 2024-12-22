@@ -15,3 +15,7 @@
 ## v.0.1.2 - [21/12/2024]
 
 - fixed bug in the velocity calculation
+
+## v.0.1.3 - [21/12/2024]
+
+- changed IMU position to the head
