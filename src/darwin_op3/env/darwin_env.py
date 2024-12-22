@@ -208,14 +208,8 @@ class DarwinEnv(MujocoEnv, utils.EzPickle):
     # determine what should be added to the observation
     # for example, the velocities and positions of various joints can be obtained through their names, as stated here
     def _get_obs(self):
-        print(f"qpos: {self.data.qpos}")
-        print(f"qvel: {self.data.qvel}")
-        print(f"sensordata: {self.data.sensordata}")
-        # position = self.data.qpos[2:].flatten()
         position = self.data.qpos[2:]
-        # velocity = self.data.qvel[2:].flatten()
         velocity = self.data.qvel[2:]
-        # imu = self.data.sensordata.flatten()
         imu = self.data.sensordata
         return np.concatenate((position,velocity,imu))
     
