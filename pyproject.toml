@@ -1,6 +1,6 @@
 [project]
 name = "darwin-op3"
-version = "0.1.8"
+version = "0.1.9"
 description = "Darwin OP3 Gym MuJoCo Environment"
 readme = "README.md"
 authors = [{ name = "Fabio Gianzanti", email = "pardal@hotmail.com" }]

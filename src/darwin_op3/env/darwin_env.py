@@ -131,15 +131,11 @@ class DarwinEnv(MujocoEnv, utils.EzPickle):
     # determine the reward depending on observation or other properties of the simulation
     def step(self, normalized_action):
         xy_position_before = mass_center(self.model, self.data)
-
-        print("normalized_action: ", normalized_action)
         
         # Normalize action to its range
         action = np.zeros(self.action_space.shape[0])
-        for i, (joint_name, joint_range) in enumerate(self.joint_ranges.items()):
+        for i, joint_range in enumerate(self.joint_ranges.values()):
             action[i] = joint_range["min"] + normalized_action[i] * joint_range["range"]
-
-        print("regular_action: ", action)
 
         # action = normalized_action * np.pi 
         self.do_simulation(action, self.frame_skip)

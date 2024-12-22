@@ -43,3 +43,7 @@
 ## v.0.1.8 - [22/12/2024]
 
 - normalizing actions from 0 to 1
+
+## v.0.1.9 - [22/12/2024]
+
+- removed print debug information
