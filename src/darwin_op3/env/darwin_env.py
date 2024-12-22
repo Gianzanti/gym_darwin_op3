@@ -78,32 +78,55 @@ class DarwinEnv(MujocoEnv, utils.EzPickle):
         }
 
         obs_size = self.data.qpos[2:].size + self.data.qvel[2:].size + self.data.sensordata.size
+        # self.observation_space = Box(
+        #     low=-np.inf, high=np.inf, shape=(obs_size,), dtype=np.float64
+        # )
         self.observation_space = Box(
-            low=-np.inf, high=np.inf, shape=(obs_size,), dtype=np.float64
+            low=-20, high=20, shape=(obs_size,), dtype=np.float64
         )
 
         # Define a dict of ranges / min-max values for each action
+        # self.joint_ranges = {
+        #     "l_sho_pitch": {"min": -3.14, "max": 3.14, "range": 6.28},
+        #     "l_sho_roll": {"min": -0.60, "max": 1.90, "range": 2.50},
+        #     "l_el": {"min": -3.00, "max": 0.50, "range": 3.50},
+        #     "r_sho_pitch": {"min": -3.14, "max": 3.14, "range": 6.28},
+        #     "r_sho_roll": {"min": -1.90, "max": 0.60, "range": 2.50},
+        #     "r_el": {"min": -0.50, "max": 3.00, "range": 3.50},
+        #     "l_hip_yaw": {"min": -0.3, "max": 0.3, "range": 0.6},
+        #     "l_hip_roll": {"min": -0.3, "max": 0.3, "range": 0.6},
+        #     "l_hip_pitch": {"min": -2.00, "max": 1.0, "range": 3.0},
+        #     "l_knee": {"min": -0.08, "max": 3.00, "range": 3.08},
+        #     "l_ank_pitch": {"min": -0.80, "max": 0.80, "range": 1.60},
+        #     "l_ank_roll": {"min": -0.80, "max": 0.80, "range": 1.60},
+        #     "r_hip_yaw": {"min": -0.3, "max": 0.3, "range": 0.6},
+        #     "r_hip_roll": {"min": -0.3, "max": 0.3, "range": 0.6},
+        #     "r_hip_pitch": {"min": -1.0, "max": 2.00, "range": 3.0},
+        #     "r_knee": {"min": -3.00, "max": 0.08, "range": 3.08},
+        #     "r_ank_pitch": {"min": -0.80, "max": 0.80, "range": 1.60},
+        #     "r_ank_roll": {"min": -0.80, "max": 0.80, "range": 1.60},
+        # }
         self.joint_ranges = {
             "l_sho_pitch": {"min": -3.14, "max": 3.14, "range": 6.28},
-            "l_sho_roll": {"min": -0.60, "max": 1.90, "range": 2.50},
-            "l_el": {"min": -3.00, "max": 0.50, "range": 3.50},
+            "l_sho_roll": {"min": -1.90, "max": 1.90, "range": 3.80},
+            "l_el": {"min": -3.00, "max": 3.0, "range": 6.00},
             "r_sho_pitch": {"min": -3.14, "max": 3.14, "range": 6.28},
-            "r_sho_roll": {"min": -1.90, "max": 0.60, "range": 2.50},
-            "r_el": {"min": -0.50, "max": 3.00, "range": 3.50},
+            "r_sho_roll": {"min": -1.90, "max": 1.90, "range": 3.80},
+            "r_el": {"min": -3.00, "max": 3.00, "range": 6.00},
             "l_hip_yaw": {"min": -0.3, "max": 0.3, "range": 0.6},
             "l_hip_roll": {"min": -0.3, "max": 0.3, "range": 0.6},
-            "l_hip_pitch": {"min": -2.00, "max": 1.0, "range": 3.0},
-            "l_knee": {"min": -0.08, "max": 3.00, "range": 3.08},
+            "l_hip_pitch": {"min": -2.00, "max": 2.0, "range": 4.0},
+            "l_knee": {"min": -3.00, "max": 3.00, "range": 6.00},
             "l_ank_pitch": {"min": -0.80, "max": 0.80, "range": 1.60},
             "l_ank_roll": {"min": -0.80, "max": 0.80, "range": 1.60},
             "r_hip_yaw": {"min": -0.3, "max": 0.3, "range": 0.6},
             "r_hip_roll": {"min": -0.3, "max": 0.3, "range": 0.6},
-            "r_hip_pitch": {"min": -1.0, "max": 2.00, "range": 3.0},
-            "r_knee": {"min": -3.00, "max": 0.08, "range": 3.08},
+            "r_hip_pitch": {"min": -2.0, "max": 2.00, "range": 4.0},
+            "r_knee": {"min": -3.00, "max": 3.00, "range": 6.00},
             "r_ank_pitch": {"min": -0.80, "max": 0.80, "range": 1.60},
             "r_ank_roll": {"min": -0.80, "max": 0.80, "range": 1.60},
         }
-        self.action_space = Box(low=0, high=1, shape=self.action_space.shape, dtype=np.float32)
+        self.action_space = Box(low=-1, high=1, shape=self.action_space.shape, dtype=np.float32)
         
 
     # determine the reward depending on observation or other properties of the simulation
@@ -112,8 +135,10 @@ class DarwinEnv(MujocoEnv, utils.EzPickle):
         
         # Normalize action to its range
         action = np.zeros(self.action_space.shape[0])
+        # for i, joint_range in enumerate(self.joint_ranges.values()):
+        #     action[i] = joint_range["min"] + normalized_action[i] * joint_range["range"]
         for i, joint_range in enumerate(self.joint_ranges.values()):
-            action[i] = joint_range["min"] + normalized_action[i] * joint_range["range"]
+            action[i] = normalized_action[i] * (joint_range["range"]/2)
 
         # action = normalized_action * np.pi 
         self.do_simulation(action, self.frame_skip)

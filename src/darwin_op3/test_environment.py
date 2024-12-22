@@ -128,25 +128,28 @@ class TestRobotisEnv(unittest.TestCase):
         }
 
         # find the 0 value for each normalized joint
-        joint_zeros = []
-        for joint in joint_ranges:
-            zero_point = 0.00 - joint_ranges[joint]["min"]
-            joint_zeros.append(zero_point / joint_ranges[joint]["range"])
+        # joint_zeros = []
+        # for joint in joint_ranges:
+        #     zero_point = 0.00 - joint_ranges[joint]["min"]
+        #     joint_zeros.append(zero_point / joint_ranges[joint]["range"])
+        # for i, joint_range in enumerate(self.joint_ranges.values()):
+        #     action[i] = normalized_action[i] * (joint_range["range"]/2)
+        action = np.zeros(env.action_space.shape[0])
 
-        action = np.array(joint_zeros)
+        # action = np.array(joint_zeros)
 
         target_left_shoulder = 0.80
         target_right_shoulder = -0.80
 
         target_left_hip = -0.45
-        target_left_knee = 0.70
+        target_left_knee = 0.75
         target_left_ankle = 0.25
 
         target_right_hip = 0.45
-        target_right_knee = -0.70
+        target_right_knee = -0.75
         target_right_ankle = -0.25
         
-        velocity = 0.005
+        velocity = 0.001
         
         while not episode_over:
             observation, reward, terminated, truncated, info = env.step(action)
@@ -155,13 +158,13 @@ class TestRobotisEnv(unittest.TestCase):
                 action[1] += velocity
 
             if observation[9] > target_right_shoulder: # -1.30
-                action[4] -= velocity * 3
+                action[4] -= velocity
 
             if observation[13] > target_left_hip: # -0.25
                 action[8] -= velocity
             
             if observation[14] < target_left_knee: # 0.50
-                action[9] += velocity * 1.5
+                action[9] += velocity
 
             if observation[15] < target_left_ankle: # 0.25
                 action[10] += velocity
@@ -170,7 +173,7 @@ class TestRobotisEnv(unittest.TestCase):
                 action[14] += velocity
             
             if observation[20] > target_right_knee: # -0.50
-                action[15] -= velocity * 1.5
+                action[15] -= velocity
 
             if observation[21] > target_right_ankle: # -0.25
                 action[16] -= velocity

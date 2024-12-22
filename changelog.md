@@ -55,3 +55,8 @@
 ## v.0.1.11 - [22/12/2024]
 
 - removed print debug information
+
+## v.0.1.12 - [22/12/2024]
+
+- limiting observation space state to -20 and 20
+- changing normalization of action space state to -1 and 1
