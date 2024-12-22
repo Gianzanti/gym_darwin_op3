@@ -39,3 +39,7 @@
 
 - readjusting limits and ranges of the model to accomplish a better human simulation
 - changed distance traveled reward to be just the distance in the x axis
+
+## v.0.1.8 - [22/12/2024]
+
+- normalizing actions from 0 to 1

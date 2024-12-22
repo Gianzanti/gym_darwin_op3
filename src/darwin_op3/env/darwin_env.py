@@ -35,7 +35,6 @@ class DarwinEnv(MujocoEnv, utils.EzPickle):
         default_camera_config: Dict[str, Union[float, int]] = DEFAULT_CAMERA_CONFIG,
         forward_reward_weight: float = 1.5,
         ctrl_cost_weight: float = 0.05,
-        terminate_when_unhealthy: bool = True,
         healthy_z_range: Tuple[float, float] = (0.260, 0.320),
         reset_noise_scale: float = 1e-2,
         **kwargs):
@@ -83,15 +82,66 @@ class DarwinEnv(MujocoEnv, utils.EzPickle):
             low=-np.inf, high=np.inf, shape=(obs_size,), dtype=np.float64
         )
 
-        self.action_space = Box(low=-1, high=1, shape=self.action_space.shape, dtype=np.float32)
+        # self.action_space = Box(low=-1, high=1, shape=self.action_space.shape, dtype=np.float32)
 
+        # <joint name="l_sho_pitch" axis="0 1 0" limited="true" range="-3.14 3.14"/>
+        # <joint name="l_sho_roll" axis="-1 0 0" limited="true" range="-0.60 1.90"/>
+        # <joint name="l_el" axis="0 1 0" limited="true" range="-3.00 0.50"/>
+        # <joint name="r_sho_pitch" axis="0 1 0" limited="true" range="-3.14 3.14"/>
+        # <joint name="r_sho_roll" axis="1 0 0" limited="true" range="-1.90 0.60"/>
+        # <joint name="r_el" axis="0 1 0" limited="true" range="-0.50 3.00"/>
+        # <joint name="l_hip_yaw" axis="0 0 -1" limited="true" range="-0.3 0.3"/>
+        # <joint name="l_hip_roll" axis="-1 0 0" limited="true" range="-0.3 0.3"/>
+        # <joint name="l_hip_pitch" axis="0 1 0" limited="true" range="-2.00 1.0"/>
+        # <joint name="l_knee" axis="0 1 0" limited="true" range="-0.08 3.00" />
+        # joint name="l_ank_pitch" axis="0 -1 0" limited="true" range="-0.80 0.80"/>
+        # <joint name="l_ank_roll" axis="1 0 0" limited="true" range="-0.80 0.80"/>
+        # <joint name="r_hip_yaw" axis="0 0 -1" limited="true" range="-0.3 0.3"/>
+        # <joint name="r_hip_roll" axis="-1 0 0" limited="true" range="-0.3 0.3"/>
+        # <joint name="r_hip_pitch" axis="0 -1 0" limited="true" range="-1.0 2.00"/>
+        # <joint name="r_knee" axis="0 -1 0" limited="true" range="-3.00 0.08" /> 
+        # <joint name="r_ank_pitch" axis="0 1 0" limited="true" range="-0.80 0.80"/>
+        # <joint name="r_ank_roll" axis="1 0 0" limited="true" range="-0.80 0.80"/>
+        
+
+        # Define a dict of ranges / min-max values for each action
+        self.joint_ranges = {
+            "l_sho_pitch": {"min": -3.14, "max": 3.14, "range": 6.28},
+            "l_sho_roll": {"min": -0.60, "max": 1.90, "range": 2.50},
+            "l_el": {"min": -3.00, "max": 0.50, "range": 3.50},
+            "r_sho_pitch": {"min": -3.14, "max": 3.14, "range": 6.28},
+            "r_sho_roll": {"min": -1.90, "max": 0.60, "range": 2.50},
+            "r_el": {"min": -0.50, "max": 3.00, "range": 3.50},
+            "l_hip_yaw": {"min": -0.3, "max": 0.3, "range": 0.6},
+            "l_hip_roll": {"min": -0.3, "max": 0.3, "range": 0.6},
+            "l_hip_pitch": {"min": -2.00, "max": 1.0, "range": 3.0},
+            "l_knee": {"min": -0.08, "max": 3.00, "range": 3.08},
+            "l_ank_pitch": {"min": -0.80, "max": 0.80, "range": 1.60},
+            "l_ank_roll": {"min": -0.80, "max": 0.80, "range": 1.60},
+            "r_hip_yaw": {"min": -0.3, "max": 0.3, "range": 0.6},
+            "r_hip_roll": {"min": -0.3, "max": 0.3, "range": 0.6},
+            "r_hip_pitch": {"min": -1.0, "max": 2.00, "range": 3.0},
+            "r_knee": {"min": -3.00, "max": 0.08, "range": 3.08},
+            "r_ank_pitch": {"min": -0.80, "max": 0.80, "range": 1.60},
+            "r_ank_roll": {"min": -0.80, "max": 0.80, "range": 1.60},
+        }
+        self.action_space = Box(low=0, high=1, shape=self.action_space.shape, dtype=np.float32)
+        
 
     # determine the reward depending on observation or other properties of the simulation
     def step(self, normalized_action):
         xy_position_before = mass_center(self.model, self.data)
 
-        # Normalize action to [-pi, pi] range
-        action = normalized_action * np.pi 
+        print("normalized_action: ", normalized_action)
+        
+        # Normalize action to its range
+        action = np.zeros(self.action_space.shape[0])
+        for i, (joint_name, joint_range) in enumerate(self.joint_ranges.items()):
+            action[i] = joint_range["min"] + normalized_action[i] * joint_range["range"]
+
+        print("regular_action: ", action)
+
+        # action = normalized_action * np.pi 
         self.do_simulation(action, self.frame_skip)
         xy_position_after = mass_center(self.model, self.data)
 

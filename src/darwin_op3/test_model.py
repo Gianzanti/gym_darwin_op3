@@ -8,6 +8,27 @@ import mujoco.viewer
 model_path = os.path.join(os.path.dirname(__file__), "model", "scene.xml")
 
 class TestModel(unittest.TestCase):
+    # def test_model_properties(self):
+    #     model = mujoco.MjModel.from_xml_path(model_path)
+    #     data = mujoco.MjData(model)
+    #     mujoco.mj_resetData(model, data)
+
+    #     print ("Model properties")
+    #     print ("nq: ", model.nq)
+    #     print ("nv: ", model.nv)
+    #     print ("na: ", model.na)
+    #     print ("nbody: ", model.nbody)
+    #     print ("njnt: ", model.njnt)
+    #     print ("ngeom: ", model.ngeom)
+    #     print ("nsensordata: ", model.nsensordata)
+    #     print ("nuserdata: ", model.nuserdata)
+    #     print ("nqpos: ", model.nqpos)
+    #     print ("nqvel: ", model.nqvel)
+    #     print ("nqacc: ", model.nqacc)
+    #     print ("nqfrc: ", model.nqfrc)
+        
+
+
     def test_viewer(self):
         model = mujoco.MjModel.from_xml_path(model_path)
         self.assertIsNotNone(model)
