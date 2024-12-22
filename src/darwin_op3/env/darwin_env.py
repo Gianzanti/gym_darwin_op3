@@ -7,7 +7,7 @@ from gymnasium.envs.mujoco import MujocoEnv
 from gymnasium.spaces import Box
 
 DEFAULT_CAMERA_CONFIG = {
-    "trackbodyid": 1,
+    "trackbodyid": 2,
     "distance": 2.5,
     "lookat": np.array((0.0, 0.0, 0.5)),
     "elevation": -5.0,
@@ -82,28 +82,6 @@ class DarwinEnv(MujocoEnv, utils.EzPickle):
             low=-np.inf, high=np.inf, shape=(obs_size,), dtype=np.float64
         )
 
-        # self.action_space = Box(low=-1, high=1, shape=self.action_space.shape, dtype=np.float32)
-
-        # <joint name="l_sho_pitch" axis="0 1 0" limited="true" range="-3.14 3.14"/>
-        # <joint name="l_sho_roll" axis="-1 0 0" limited="true" range="-0.60 1.90"/>
-        # <joint name="l_el" axis="0 1 0" limited="true" range="-3.00 0.50"/>
-        # <joint name="r_sho_pitch" axis="0 1 0" limited="true" range="-3.14 3.14"/>
-        # <joint name="r_sho_roll" axis="1 0 0" limited="true" range="-1.90 0.60"/>
-        # <joint name="r_el" axis="0 1 0" limited="true" range="-0.50 3.00"/>
-        # <joint name="l_hip_yaw" axis="0 0 -1" limited="true" range="-0.3 0.3"/>
-        # <joint name="l_hip_roll" axis="-1 0 0" limited="true" range="-0.3 0.3"/>
-        # <joint name="l_hip_pitch" axis="0 1 0" limited="true" range="-2.00 1.0"/>
-        # <joint name="l_knee" axis="0 1 0" limited="true" range="-0.08 3.00" />
-        # joint name="l_ank_pitch" axis="0 -1 0" limited="true" range="-0.80 0.80"/>
-        # <joint name="l_ank_roll" axis="1 0 0" limited="true" range="-0.80 0.80"/>
-        # <joint name="r_hip_yaw" axis="0 0 -1" limited="true" range="-0.3 0.3"/>
-        # <joint name="r_hip_roll" axis="-1 0 0" limited="true" range="-0.3 0.3"/>
-        # <joint name="r_hip_pitch" axis="0 -1 0" limited="true" range="-1.0 2.00"/>
-        # <joint name="r_knee" axis="0 -1 0" limited="true" range="-3.00 0.08" /> 
-        # <joint name="r_ank_pitch" axis="0 1 0" limited="true" range="-0.80 0.80"/>
-        # <joint name="r_ank_roll" axis="1 0 0" limited="true" range="-0.80 0.80"/>
-        
-
         # Define a dict of ranges / min-max values for each action
         self.joint_ranges = {
             "l_sho_pitch": {"min": -3.14, "max": 3.14, "range": 6.28},
@@ -150,6 +128,7 @@ class DarwinEnv(MujocoEnv, utils.EzPickle):
             "x_position": self.data.qpos[0],
             "y_position": self.data.qpos[1],
             "z_position": self.data.qpos[2],
+            "orientation": self.data.qpos[3],
             "x_velocity": self.velocity[0],
             "y_velocity": self.velocity[1],
             "distance_from_origin": np.linalg.norm(self.data.qpos[0:2], ord=2),
@@ -229,9 +208,15 @@ class DarwinEnv(MujocoEnv, utils.EzPickle):
     # determine what should be added to the observation
     # for example, the velocities and positions of various joints can be obtained through their names, as stated here
     def _get_obs(self):
-        position = self.data.qpos[2:].flatten()
-        velocity = self.data.qvel[2:].flatten()
-        imu = self.data.sensordata.flatten()
+        print(f"qpos: {self.data.qpos}")
+        print(f"qvel: {self.data.qvel}")
+        print(f"sensordata: {self.data.sensordata}")
+        # position = self.data.qpos[2:].flatten()
+        position = self.data.qpos[2:]
+        # velocity = self.data.qvel[2:].flatten()
+        velocity = self.data.qvel[2:]
+        # imu = self.data.sensordata.flatten()
+        imu = self.data.sensordata
         return np.concatenate((position,velocity,imu))
     
     def _get_reset_info(self):
@@ -241,6 +226,7 @@ class DarwinEnv(MujocoEnv, utils.EzPickle):
             "x_position": self.data.qpos[0],
             "y_position": self.data.qpos[1],
             "z_position": self.data.qpos[2],
+            "orientation": self.data.qpos[3],
             "x_velocity": 0,
             "y_velocity": 0,
             "distance_from_origin": np.linalg.norm(self.data.qpos[0:2], ord=2),

@@ -47,3 +47,7 @@
 ## v.0.1.9 - [22/12/2024]
 
 - removed print debug information
+
+## v.0.1.10 - [22/12/2024]
+
+- changed camera track body id

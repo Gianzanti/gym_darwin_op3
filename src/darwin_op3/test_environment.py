@@ -133,7 +133,6 @@ class TestRobotisEnv(unittest.TestCase):
             zero_point = 0.00 - joint_ranges[joint]["min"]
             joint_zeros.append(zero_point / joint_ranges[joint]["range"])
 
-        # action = np.zeros(env.action_space.shape[0])
         action = np.array(joint_zeros)
 
         target_left_shoulder = 0.80
@@ -149,52 +148,33 @@ class TestRobotisEnv(unittest.TestCase):
         
         velocity = 0.005
         
-    #   <key time="1" qpos='0.00 0.00 0.279106 0.99993 0.00 0.00 0.00 0.00 1.30 -0.30 0.00 -1.30 0.30 0.00 0.00 -0.25 0.50 0.25 0.00 0.00 0.00 0.25 -0.50 -0.25 0.00' />
-
         while not episode_over:
             observation, reward, terminated, truncated, info = env.step(action)
 
             if observation[6] < target_left_shoulder: # 1.30
-                # print(f"Left Shoulder Roll: {observation[6]} < {target_left_shoulder}")
                 action[1] += velocity
 
             if observation[9] > target_right_shoulder: # -1.30
                 action[4] -= velocity * 3
-                # if action[4] < target_right_shoulder:
-                #     action[4] = target_right_shoulder
 
             if observation[13] > target_left_hip: # -0.25
                 action[8] -= velocity
-                # if action[8] < target_left_hip:
-                #     action[8] = target_left_hip
             
             if observation[14] < target_left_knee: # 0.50
                 action[9] += velocity * 1.5
-                # if action[9] > target_left_knee:
-                #     action[9] = target_left_knee
 
             if observation[15] < target_left_ankle: # 0.25
                 action[10] += velocity
-                # if action[10] > target_left_ankle:
-                #     action[10] = target_left_ankle
 
             if observation[19] < target_right_hip: # 0.25
                 action[14] += velocity
-                # if action[14] > target_right_hip:
-                #     action[14] = target_right_hip
             
             if observation[20] > target_right_knee: # -0.50
                 action[15] -= velocity * 1.5
-                # if action[15] < target_right_knee:
-                #     action[15] = target_right_knee
 
             if observation[21] > target_right_ankle: # -0.25
                 action[16] -= velocity
-                # if action[16] < target_right_ankle:
-                #     action[16] = target_right_ankle
-
-
-            
+           
             # print(f"Observation: {observation}")
             print(f"Reward: {reward}")
             # print(f"Terminated: {terminated}")
