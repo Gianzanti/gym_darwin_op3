@@ -19,3 +19,14 @@
 ## v.0.1.3 - [21/12/2024]
 
 - changed IMU position to the head
+
+## v.0.1.4 - [21/12/2024]
+
+- calculating velocity using trapezoidal rule
+- changed forward default factor to 0.5
+- included distance_traveled in the reward function
+
+## v.0.1.5 - [21/12/2024]
+
+- calculating velocity by position difference before and after step
+- changed forward default factor to 1.5

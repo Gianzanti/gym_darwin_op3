@@ -15,15 +15,16 @@ class TestRobotisEnv(unittest.TestCase):
         env = gym.make('DarwinOp3-v0', render_mode="human", width=1920, height=1080)
 
         observation, info = env.reset()
-        print(f"Observation space: {env.observation_space}")
-        print(f"Action space: {env.action_space}")
-        print(f"Info: {info}")
+        # print(f"Observation space: {env.observation_space}")
+        # print(f"Action space: {env.action_space}")
+        # print(f"Info: {info}")
         # print(f"Action sample: {env.action_space.sample()}")
 
         episode_over = False
         counter = 0
         action_one = 0.00
-        increment = 0.01
+        # increment = 0.01
+        increment = 0.00
         step = increment
         action = np.zeros(env.action_space.shape[0])
         while not episode_over:
@@ -36,11 +37,12 @@ class TestRobotisEnv(unittest.TestCase):
                 action[5] = action_one
 
             observation, reward, terminated, truncated, info = env.step(action)
-            print(f"Observation: {observation}")
+            # print(f"Observation: {observation}")
             print(f"Reward: {reward}")
-            print(f"Terminated: {terminated}")
-            print(f"Truncated: {truncated}")
-            print(f"Info: {info}")
+            # print(f"Terminated: {terminated}")
+            # print(f"Truncated: {truncated}")
+            # print(f"Info: {info}")
+            
 
             episode_over = counter > 1000
             if (action_one > 3.14):

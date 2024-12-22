@@ -34,7 +34,7 @@ class DarwinEnv(MujocoEnv, utils.EzPickle):
         self,         
         frame_skip: int = 5,
         default_camera_config: Dict[str, Union[float, int]] = DEFAULT_CAMERA_CONFIG,
-        forward_reward_weight: float = 1.50,
+        forward_reward_weight: float = 1.5,
         ctrl_cost_weight: float = 0.05,
         terminate_when_unhealthy: bool = True,
         healthy_z_range: Tuple[float, float] = (0.260, 0.320),
@@ -58,8 +58,9 @@ class DarwinEnv(MujocoEnv, utils.EzPickle):
         self._healthy_z_range: Tuple[float, float] = healthy_z_range
         self._reset_noise_scale: float = reset_noise_scale
 
-        self.accel = np.zeros(3)
-        self.vel = np.zeros(3)
+        # self.accel = np.zeros(3)
+        self.velocity = np.zeros(2)
+        self.pos = np.zeros(3)
 
         xml_path = os.path.join(os.path.dirname(__file__), "..", "model", "scene.xml")
 
@@ -90,32 +91,40 @@ class DarwinEnv(MujocoEnv, utils.EzPickle):
         # Define action space as a symmetric and normalized box
         self.action_space = Box(low=-1, high=1, shape=self.action_space.shape, dtype=np.float32)
       
-    def calculate_velocity_from_imu(self):
-        """
-        Calculates linear velocity from IMU data.
+    # def calculate_velocity_from_imu(self):
+    #     """
+    #     Calculates linear velocity from IMU data.
 
-        Args:
-            imu_data: A list or array of IMU data points. Each point should be a list/tuple 
-                    containing at least linear acceleration (ax, ay, az) in m/s^2.
-            dt: Time difference between consecutive IMU readings in seconds.
+    #     Args:
+    #         imu_data: A list or array of IMU data points. Each point should be a list/tuple 
+    #                 containing at least linear acceleration (ax, ay, az) in m/s^2.
+    #         dt: Time difference between consecutive IMU readings in seconds.
 
-        Returns:
-            A list or array of linear velocities (vx, vy, vz) in m/s.
-        """
-        # prev_velocity = self.vel  # Initial velocity assumed to be zero
-        self.accel = np.array(self.data.sensordata[0:3])  # Extract acceleration data
-        self.vel = self.accel * self.dt
+    #     Returns:
+    #         A list or array of linear velocities (vx, vy, vz) in m/s.
+    #     """
+    #     prev_accel = self.accel  # Initial acceleration assumed to be zero
+    #     self.accel = np.array(self.data.sensordata[0:3])  # Extract acceleration data
+
+    #     # Trapezoidal Rule: For more accurate velocity estimation, especially with noisy IMU data, use the Trapezoidal Rule:
+    #     self.vel[0] = self.vel[0] + 0.5 * self.dt * (self.accel[0] + prev_accel[0])
+    #     self.vel[1] = self.vel[1] + 0.5 * self.dt * (self.accel[1] + prev_accel[1])
+    #     self.vel[2] = self.vel[2] + 0.5 * self.dt * (self.accel[2] + prev_accel[2])
+
 
 
     # determine the reward depending on observation or other properties of the simulation
     def step(self, normalized_action):
+        xy_position_before = mass_center(self.model, self.data)
+
         # Normalize action to [-pi, pi] range
         action = normalized_action * np.pi 
-
         self.do_simulation(action, self.frame_skip)
+        xy_position_after = mass_center(self.model, self.data)
 
-        self.calculate_velocity_from_imu()
-        x_velocity, y_velocity = self.vel[0], self.vel[1]
+        # self.calculate_velocity_from_imu()
+        self.velocity = (xy_position_after - xy_position_before) / self.dt
+        # x_velocity, y_velocity = xy_velocity
 
         observation = self._get_obs()
         reward, reward_info = self._get_rew()
@@ -124,8 +133,8 @@ class DarwinEnv(MujocoEnv, utils.EzPickle):
             "x_position": self.data.qpos[0],
             "y_position": self.data.qpos[1],
             "z_position": self.data.qpos[2],
-            "x_velocity": x_velocity,
-            "y_velocity": y_velocity,
+            "x_velocity": self.velocity[0],
+            "y_velocity": self.velocity[1],
             "distance_from_origin": np.linalg.norm(self.data.qpos[0:2], ord=2),
             **reward_info,
         }
@@ -160,14 +169,23 @@ class DarwinEnv(MujocoEnv, utils.EzPickle):
         return distance2 * self._zmp_weight
 
     def forward_reward(self):
-        return self._forward_reward_weight * self.vel[0]
+        return self._forward_reward_weight * self.velocity[0]
+
+    def distance_traveled(self):
+        last_position = self.pos[0:2]
+        distance_traveled = np.linalg.norm(last_position - self.data.qpos[0:2], ord=2)
+        self.pos = self.data.qpos[0:2].copy()
+        return self._forward_reward_weight * distance_traveled
 
     def _get_rew(self):
         forward_reward = self.forward_reward()
+        distance_traveled = self.distance_traveled()
+
         reward = forward_reward
 
         reward_info = {
             "forward_reward": forward_reward,
+            "distance_traveled": distance_traveled,
         }
 
         return reward, reward_info
@@ -197,14 +215,13 @@ class DarwinEnv(MujocoEnv, utils.EzPickle):
         return np.concatenate((position,velocity,imu))
     
     def _get_reset_info(self):
-        self.calculate_velocity_from_imu()
-        x_velocity, y_velocity = self.vel[0], self.vel[1]
+        # self.calculate_velocity_from_imu()
 
         return {
             "x_position": self.data.qpos[0],
             "y_position": self.data.qpos[1],
             "z_position": self.data.qpos[2],
-            "x_velocity": x_velocity,
-            "y_velocity": y_velocity,
+            "x_velocity": 0,
+            "y_velocity": 0,
             "distance_from_origin": np.linalg.norm(self.data.qpos[0:2], ord=2),
         }        
