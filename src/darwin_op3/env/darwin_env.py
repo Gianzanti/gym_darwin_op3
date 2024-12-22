@@ -29,7 +29,6 @@ class DarwinEnv(MujocoEnv, utils.EzPickle):
         "render_fps": 100,
     }
 
-    # set default episode_len for truncate episodes
     def __init__(
         self,         
         frame_skip: int = 5,
@@ -47,18 +46,15 @@ class DarwinEnv(MujocoEnv, utils.EzPickle):
             default_camera_config,
             forward_reward_weight,
             ctrl_cost_weight,
-            terminate_when_unhealthy,
             healthy_z_range,
             reset_noise_scale,
             **kwargs
         )
         self._forward_reward_weight: float = forward_reward_weight
         self._ctrl_cost_weight: float = ctrl_cost_weight
-        self._terminate_when_unhealthy: bool = terminate_when_unhealthy
         self._healthy_z_range: Tuple[float, float] = healthy_z_range
         self._reset_noise_scale: float = reset_noise_scale
 
-        # self.accel = np.zeros(3)
         self.velocity = np.zeros(2)
         self.pos = np.zeros(3)
 
@@ -83,34 +79,11 @@ class DarwinEnv(MujocoEnv, utils.EzPickle):
         }
 
         obs_size = self.data.qpos[2:].size + self.data.qvel[2:].size + self.data.sensordata.size
-
         self.observation_space = Box(
             low=-np.inf, high=np.inf, shape=(obs_size,), dtype=np.float64
         )
 
-        # Define action space as a symmetric and normalized box
         self.action_space = Box(low=-1, high=1, shape=self.action_space.shape, dtype=np.float32)
-      
-    # def calculate_velocity_from_imu(self):
-    #     """
-    #     Calculates linear velocity from IMU data.
-
-    #     Args:
-    #         imu_data: A list or array of IMU data points. Each point should be a list/tuple 
-    #                 containing at least linear acceleration (ax, ay, az) in m/s^2.
-    #         dt: Time difference between consecutive IMU readings in seconds.
-
-    #     Returns:
-    #         A list or array of linear velocities (vx, vy, vz) in m/s.
-    #     """
-    #     prev_accel = self.accel  # Initial acceleration assumed to be zero
-    #     self.accel = np.array(self.data.sensordata[0:3])  # Extract acceleration data
-
-    #     # Trapezoidal Rule: For more accurate velocity estimation, especially with noisy IMU data, use the Trapezoidal Rule:
-    #     self.vel[0] = self.vel[0] + 0.5 * self.dt * (self.accel[0] + prev_accel[0])
-    #     self.vel[1] = self.vel[1] + 0.5 * self.dt * (self.accel[1] + prev_accel[1])
-    #     self.vel[2] = self.vel[2] + 0.5 * self.dt * (self.accel[2] + prev_accel[2])
-
 
 
     # determine the reward depending on observation or other properties of the simulation
@@ -122,9 +95,7 @@ class DarwinEnv(MujocoEnv, utils.EzPickle):
         self.do_simulation(action, self.frame_skip)
         xy_position_after = mass_center(self.model, self.data)
 
-        # self.calculate_velocity_from_imu()
         self.velocity = (xy_position_after - xy_position_before) / self.dt
-        # x_velocity, y_velocity = xy_velocity
 
         observation = self._get_obs()
         reward, reward_info = self._get_rew()
@@ -171,15 +142,15 @@ class DarwinEnv(MujocoEnv, utils.EzPickle):
     def forward_reward(self):
         return self._forward_reward_weight * self.velocity[0]
 
-    def distance_traveled(self):
-        last_position = self.pos[0:2]
-        distance_traveled = np.linalg.norm(last_position - self.data.qpos[0:2], ord=2)
-        self.pos = self.data.qpos[0:2].copy()
-        return self._forward_reward_weight * distance_traveled
+    # def distance_traveled(self):
+    #     last_position = self.pos[0:2]
+    #     distance_traveled = np.linalg.norm(last_position - self.data.qpos[0:2], ord=2)
+    #     self.pos = self.data.qpos[0:2].copy()
+    #     return self._forward_reward_weight * distance_traveled
 
     def _get_rew(self):
         forward_reward = self.forward_reward()
-        distance_traveled = self.distance_traveled()
+        distance_traveled = np.linalg.norm(self.data.qpos[0:2], ord=2)
 
         reward = forward_reward
 
@@ -190,6 +161,7 @@ class DarwinEnv(MujocoEnv, utils.EzPickle):
 
         return reward, reward_info
 
+
     # define what should happen when the model is reset (at the beginning of each episode)
     def reset_model(self):
         noise_low = -self._reset_noise_scale
@@ -198,6 +170,7 @@ class DarwinEnv(MujocoEnv, utils.EzPickle):
         qpos = self.init_qpos + self.np_random.uniform(
             low=noise_low, high=noise_high, size=self.model.nq
         )
+        
         qvel = self.init_qvel + self.np_random.uniform(
             low=noise_low, high=noise_high, size=self.model.nv
         )

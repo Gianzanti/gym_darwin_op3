@@ -30,3 +30,7 @@
 
 - calculating velocity by position difference before and after step
 - changed forward default factor to 1.5
+
+## v.0.1.6 - [22/12/2024]
+
+- changed distance traveled reward to be the total distance from the origin without factor
