@@ -2,7 +2,7 @@ from gymnasium.envs.registration import find_highest_version, register
 
 env_name = "DarwinOp3"
 env_version = 0
-env = f"gymnasium_env/{env_name}-v{env_version}"
+env = f"{env_name}-v{env_version}"
 
 env_id = find_highest_version(ns=None, name=env_name)
 

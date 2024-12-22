@@ -7,12 +7,12 @@ class TestRobotisEnv(unittest.TestCase):
     def test_checkenv(self):
         import gymnasium as gym
         from stable_baselines3.common.env_checker import check_env
-        env = gym.make('gymnasium_env/DarwinOp3-v0', render_mode="human", width=1920, height=1080)
+        env = gym.make('DarwinOp3-v0', render_mode="human", width=1920, height=1080)
         check_env(env.unwrapped)
         
     def test_rewards(self):
         import gymnasium as gym
-        env = gym.make('gymnasium_env/DarwinOp3-v0', render_mode="human", width=1920, height=1080)
+        env = gym.make('DarwinOp3-v0', render_mode="human", width=1920, height=1080)
 
         observation, info = env.reset()
         print(f"Observation space: {env.observation_space}")
@@ -62,7 +62,7 @@ class TestRobotisEnv(unittest.TestCase):
 
     def test_imu(self):
         import gymnasium as gym
-        env = gym.make('gymnasium_env/DarwinOp3-v0', render_mode="human", width=1024, height=768)
+        env = gym.make('DarwinOp3-v0', render_mode="human", width=1024, height=768)
 
         observation, info = env.reset()
         # print(f"Observation space: {env.observation_space}")

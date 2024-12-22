@@ -37,7 +37,7 @@ class DarwinEnv(MujocoEnv, utils.EzPickle):
         forward_reward_weight: float = 1.50,
         ctrl_cost_weight: float = 0.05,
         terminate_when_unhealthy: bool = True,
-        healthy_z_range: Tuple[float, float] = (0.260, 0.32),
+        healthy_z_range: Tuple[float, float] = (0.260, 0.320),
         reset_noise_scale: float = 1e-2,
         **kwargs):
 
@@ -82,7 +82,6 @@ class DarwinEnv(MujocoEnv, utils.EzPickle):
         }
 
         obs_size = self.data.qpos[2:].size + self.data.qvel[2:].size + self.data.sensordata.size
-        print(f"Observation size: {obs_size}")
 
         self.observation_space = Box(
             low=-np.inf, high=np.inf, shape=(obs_size,), dtype=np.float64
@@ -112,7 +111,6 @@ class DarwinEnv(MujocoEnv, utils.EzPickle):
     def step(self, normalized_action):
         # Normalize action to [-pi, pi] range
         action = normalized_action * np.pi 
-        print(f"Normalized action: {action}")
 
         self.do_simulation(action, self.frame_skip)
 
