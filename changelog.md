@@ -34,3 +34,8 @@
 ## v.0.1.6 - [22/12/2024]
 
 - changed distance traveled reward to be the total distance from the origin without factor
+
+## v.0.1.7 - [22/12/2024]
+
+- readjusting limits and ranges of the model to accomplish a better human simulation
+- changed distance traveled reward to be just the distance in the x axis

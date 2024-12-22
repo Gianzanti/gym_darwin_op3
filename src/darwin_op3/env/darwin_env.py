@@ -150,7 +150,8 @@ class DarwinEnv(MujocoEnv, utils.EzPickle):
 
     def _get_rew(self):
         forward_reward = self.forward_reward()
-        distance_traveled = np.linalg.norm(self.data.qpos[0:2], ord=2)
+        # distance_traveled = np.linalg.norm(self.data.qpos[0:2], ord=2)
+        distance_traveled = self.data.qpos[0]
 
         reward = forward_reward
 
