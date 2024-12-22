@@ -102,9 +102,9 @@ class DarwinEnv(MujocoEnv, utils.EzPickle):
         Returns:
             A list or array of linear velocities (vx, vy, vz) in m/s.
         """
-        prev_velocity = self.vel  # Initial velocity assumed to be zero
+        # prev_velocity = self.vel  # Initial velocity assumed to be zero
         self.accel = np.array(self.data.sensordata[0:3])  # Extract acceleration data
-        self.vel = prev_velocity + self.accel * self.dt
+        self.vel = self.accel * self.dt
 
 
     # determine the reward depending on observation or other properties of the simulation

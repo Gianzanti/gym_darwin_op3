@@ -11,3 +11,7 @@
 
 - removed 'gymnasiun_env' from registration process
 - removed print debug information
+
+## v.0.1.2 - [21/12/2024]
+
+- fixed bug in the velocity calculation
