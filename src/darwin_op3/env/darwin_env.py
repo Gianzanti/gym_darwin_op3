@@ -218,10 +218,29 @@ class DarwinEnv(MujocoEnv, utils.EzPickle):
         noise_low = -self._reset_noise_scale
         noise_high = self._reset_noise_scale
 
+
+        self.init_qpos[8] = 1.30
+        self.init_qpos[11] = -1.30
+        self.init_qpos[15] = -0.45
+        self.init_qpos[16] = 0.70
+        self.init_qpos[17] = 0.25
+        self.init_qpos[21] = 0.45
+        self.init_qpos[22] = -0.70
+        self.init_qpos[23] = -0.25
+
         qpos = self.init_qpos + self.np_random.uniform(
             low=noise_low, high=noise_high, size=self.model.nq
         )
-        
+        # qpos[8] = 1.30
+        # qpos[11] = -1.30
+        # qpos[15] = -0.45
+        # qpos[16] = 0.70
+        # qpos[17] = 0.25
+        # qpos[21] = 0.45
+        # qpos[22] = -0.70
+        # qpos[23] = -0.25
+
+
         qvel = self.init_qvel + self.np_random.uniform(
             low=noise_low, high=noise_high, size=self.model.nv
         )

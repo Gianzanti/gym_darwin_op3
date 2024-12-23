@@ -60,3 +60,7 @@
 
 - limiting observation space state to -20 and 20
 - changing normalization of action space state to -1 and 1
+
+## v.0.1.13 - [23/12/2024]
+
+- changing inital pose
