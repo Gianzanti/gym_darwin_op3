@@ -15,8 +15,8 @@ class TestRobotisEnv(unittest.TestCase):
         env = gym.make('DarwinOp3-v0', render_mode="human", width=1024, height=768)
 
         observation, info = env.reset()
-        print(f"Observation space: {env.observation_space}")
-        print(f"Action space: {env.action_space}")
+        # print(f"Observation space: {env.observation_space}")
+        # print(f"Action space: {env.action_space}")
         # print(f"Info: {info}")
         # print(f"Action sample: {env.action_space.sample()}")
 
@@ -40,8 +40,8 @@ class TestRobotisEnv(unittest.TestCase):
     #   <key time="1" qpos='0.00 0.00 0.279106 0.99993 0.00 0.00 0.00 0.00 1.30 -0.30 0.00 -1.30 0.30 0.00 0.00 -0.25 0.50 0.25 0.00 0.00 0.00 0.25 -0.50 -0.25 0.00' />
 
         while not episode_over:
-            # observation, reward, terminated, truncated, info = env.step(action)
-            env.render()
+            observation, reward, terminated, truncated, info = env.step(action)
+            # env.render()
 
             # if observation[6] < target_left_shoulder: # 1.30
             #     action[1] += velocity * 3
@@ -85,8 +85,8 @@ class TestRobotisEnv(unittest.TestCase):
 
 
             
-            print(f"Observation: {observation}")
-            # print(f"Reward: {reward}")
+            # print(f"Observation: {observation}")
+            print(f"Reward: {reward}")
             # print(f"Terminated: {terminated}")
             # print(f"Truncated: {truncated}")
             # print(f"Info: {info}")

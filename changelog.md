@@ -64,3 +64,8 @@
 ## v.0.1.13 - [23/12/2024]
 
 - changing inital pose
+
+## v.0.1.14 - [23/12/2024]
+
+- added distance_traveled reward
+- added turn_cost penalty

@@ -198,16 +198,21 @@ class DarwinEnv(MujocoEnv, utils.EzPickle):
     #     self.pos = self.data.qpos[0:2].copy()
     #     return self._forward_reward_weight * distance_traveled
 
+    def turn_cost(self):
+        return np.linalg.norm(self.data.sensordata[3:6], ord=2)
+
     def _get_rew(self):
         forward_reward = self.forward_reward()
         # distance_traveled = np.linalg.norm(self.data.qpos[0:2], ord=2)
         distance_traveled = self.data.qpos[0]
+        turn_cost = self.turn_cost()
 
-        reward = forward_reward
+        reward = forward_reward + distance_traveled - turn_cost
 
         reward_info = {
             "forward_reward": forward_reward,
             "distance_traveled": distance_traveled,
+            "turn_cost": turn_cost,
         }
 
         return reward, reward_info
@@ -217,7 +222,6 @@ class DarwinEnv(MujocoEnv, utils.EzPickle):
     def reset_model(self):
         noise_low = -self._reset_noise_scale
         noise_high = self._reset_noise_scale
-
 
         self.init_qpos[8] = 1.30
         self.init_qpos[11] = -1.30
