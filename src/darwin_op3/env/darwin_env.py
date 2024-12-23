@@ -36,7 +36,7 @@ class DarwinEnv(MujocoEnv, utils.EzPickle):
         default_camera_config: Dict[str, Union[float, int]] = DEFAULT_CAMERA_CONFIG,
         forward_reward_weight: float = 1.5,
         ctrl_cost_weight: float = 5e-2,
-        turn_cost_weight: float = 1e0,
+        turn_cost_weight: float = 1e-1,
         healthy_z_range: Tuple[float, float] = (0.260, 0.320),
         reset_noise_scale: float = 1e-2,
         **kwargs):
@@ -208,7 +208,8 @@ class DarwinEnv(MujocoEnv, utils.EzPickle):
 
     def turn_cost(self):
         # return np.linalg.norm(self.data.sensordata[3:6], ord=2)
-        turn_cost = math.pow(self.data.sensordata[3], 2) + math.pow(self.data.sensordata[4], 2) + math.pow(self.data.sensordata[5], 2)
+        # turn_cost = math.pow(self.data.sensordata[3], 2) + math.pow(self.data.sensordata[4], 2) + math.pow(self.data.sensordata[5], 2)
+        turn_cost = math.pow(self.data.sensordata[4], 2)
         # if math.pow(self.data.sensordata[3], 2) > self.greaterX:
         #     self.greaterX = math.pow(self.data.sensordata[3], 2)
         # if math.pow(self.data.sensordata[4], 2) > self.greaterY:

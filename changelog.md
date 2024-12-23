@@ -81,3 +81,7 @@
 ## v.0.1.17 - [23/12/2024]
 
 - added turn_cost penalty
+
+## v.0.1.18 - [23/12/2024]
+
+- added turn_cost penalty only for y axis and with a different factor (0.1)
