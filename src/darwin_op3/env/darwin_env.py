@@ -205,7 +205,8 @@ class DarwinEnv(MujocoEnv, utils.EzPickle):
         forward_reward = self.forward_reward()
         # distance_traveled = np.linalg.norm(self.data.qpos[0:2], ord=2)
         distance_traveled = self.data.qpos[0]
-        turn_cost = self.turn_cost()
+        # turn_cost = self.turn_cost()
+        turn_cost = 0
 
         reward = forward_reward + distance_traveled - turn_cost
 

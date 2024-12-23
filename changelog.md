@@ -69,3 +69,7 @@
 
 - added distance_traveled reward
 - added turn_cost penalty
+
+## v.0.1.15 - [23/12/2024]
+
+- disabled turn_cost penalty
