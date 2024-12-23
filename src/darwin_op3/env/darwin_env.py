@@ -106,26 +106,26 @@ class DarwinEnv(MujocoEnv, utils.EzPickle):
         #     "r_ank_pitch": {"min": -0.80, "max": 0.80, "range": 1.60},
         #     "r_ank_roll": {"min": -0.80, "max": 0.80, "range": 1.60},
         # }
-        self.joint_ranges = {
-            "l_sho_pitch": {"min": -3.14, "max": 3.14, "range": 6.28},
-            "l_sho_roll": {"min": -1.90, "max": 1.90, "range": 3.80},
-            "l_el": {"min": -3.00, "max": 3.0, "range": 6.00},
-            "r_sho_pitch": {"min": -3.14, "max": 3.14, "range": 6.28},
-            "r_sho_roll": {"min": -1.90, "max": 1.90, "range": 3.80},
-            "r_el": {"min": -3.00, "max": 3.00, "range": 6.00},
-            "l_hip_yaw": {"min": -0.3, "max": 0.3, "range": 0.6},
-            "l_hip_roll": {"min": -0.3, "max": 0.3, "range": 0.6},
-            "l_hip_pitch": {"min": -2.00, "max": 2.0, "range": 4.0},
-            "l_knee": {"min": -3.00, "max": 3.00, "range": 6.00},
-            "l_ank_pitch": {"min": -0.80, "max": 0.80, "range": 1.60},
-            "l_ank_roll": {"min": -0.80, "max": 0.80, "range": 1.60},
-            "r_hip_yaw": {"min": -0.3, "max": 0.3, "range": 0.6},
-            "r_hip_roll": {"min": -0.3, "max": 0.3, "range": 0.6},
-            "r_hip_pitch": {"min": -2.0, "max": 2.00, "range": 4.0},
-            "r_knee": {"min": -3.00, "max": 3.00, "range": 6.00},
-            "r_ank_pitch": {"min": -0.80, "max": 0.80, "range": 1.60},
-            "r_ank_roll": {"min": -0.80, "max": 0.80, "range": 1.60},
-        }
+        # self.joint_ranges = {
+        #     "l_sho_pitch": {"min": -3.14, "max": 3.14, "range": 6.28},
+        #     "l_sho_roll": {"min": -1.90, "max": 1.90, "range": 3.80},
+        #     "l_el": {"min": -3.00, "max": 3.0, "range": 6.00},
+        #     "r_sho_pitch": {"min": -3.14, "max": 3.14, "range": 6.28},
+        #     "r_sho_roll": {"min": -1.90, "max": 1.90, "range": 3.80},
+        #     "r_el": {"min": -3.00, "max": 3.00, "range": 6.00},
+        #     "l_hip_yaw": {"min": -0.3, "max": 0.3, "range": 0.6},
+        #     "l_hip_roll": {"min": -0.3, "max": 0.3, "range": 0.6},
+        #     "l_hip_pitch": {"min": -2.00, "max": 2.0, "range": 4.0},
+        #     "l_knee": {"min": -3.00, "max": 3.00, "range": 6.00},
+        #     "l_ank_pitch": {"min": -0.80, "max": 0.80, "range": 1.60},
+        #     "l_ank_roll": {"min": -0.80, "max": 0.80, "range": 1.60},
+        #     "r_hip_yaw": {"min": -0.3, "max": 0.3, "range": 0.6},
+        #     "r_hip_roll": {"min": -0.3, "max": 0.3, "range": 0.6},
+        #     "r_hip_pitch": {"min": -2.0, "max": 2.00, "range": 4.0},
+        #     "r_knee": {"min": -3.00, "max": 3.00, "range": 6.00},
+        #     "r_ank_pitch": {"min": -0.80, "max": 0.80, "range": 1.60},
+        #     "r_ank_roll": {"min": -0.80, "max": 0.80, "range": 1.60},
+        # }
         self.action_space = Box(low=-1, high=1, shape=self.action_space.shape, dtype=np.float32)
         
 
@@ -134,14 +134,14 @@ class DarwinEnv(MujocoEnv, utils.EzPickle):
         xy_position_before = mass_center(self.model, self.data)
         
         # Normalize action to its range
-        action = np.zeros(self.action_space.shape[0])
+        # action = np.zeros(self.action_space.shape[0])
         # for i, joint_range in enumerate(self.joint_ranges.values()):
-        #     action[i] = joint_range["min"] + normalized_action[i] * joint_range["range"]
-        for i, joint_range in enumerate(self.joint_ranges.values()):
-            action[i] = normalized_action[i] * (joint_range["range"]/2)
+        # #     action[i] = joint_range["min"] + normalized_action[i] * joint_range["range"]
+        # for i, joint_range in enumerate(self.joint_ranges.values()):
+        #     action[i] = normalized_action[i] * (joint_range["range"]/2)
 
         # action = normalized_action * np.pi 
-        self.do_simulation(action, self.frame_skip)
+        self.do_simulation(normalized_action * 5, self.frame_skip)
         xy_position_after = mass_center(self.model, self.data)
 
         self.velocity = (xy_position_after - xy_position_before) / self.dt
