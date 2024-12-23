@@ -76,4 +76,8 @@
 
 ## v.0.1.16 - [23/12/2024]
 
-- changing controle mode to torque instead of position
+- changing control mode to force (torque) instead of position
+
+## v.0.1.17 - [23/12/2024]
+
+- added turn_cost penalty

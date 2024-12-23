@@ -1,3 +1,4 @@
+import math
 import os
 from typing import Dict, Tuple, Union
 
@@ -34,7 +35,8 @@ class DarwinEnv(MujocoEnv, utils.EzPickle):
         frame_skip: int = 5,
         default_camera_config: Dict[str, Union[float, int]] = DEFAULT_CAMERA_CONFIG,
         forward_reward_weight: float = 1.5,
-        ctrl_cost_weight: float = 0.05,
+        ctrl_cost_weight: float = 5e-2,
+        turn_cost_weight: float = 1e0,
         healthy_z_range: Tuple[float, float] = (0.260, 0.320),
         reset_noise_scale: float = 1e-2,
         **kwargs):
@@ -45,12 +47,14 @@ class DarwinEnv(MujocoEnv, utils.EzPickle):
             default_camera_config,
             forward_reward_weight,
             ctrl_cost_weight,
+            turn_cost_weight,
             healthy_z_range,
             reset_noise_scale,
             **kwargs
         )
         self._forward_reward_weight: float = forward_reward_weight
         self._ctrl_cost_weight: float = ctrl_cost_weight
+        self._turn_cost_weight: float = turn_cost_weight
         self._healthy_z_range: Tuple[float, float] = healthy_z_range
         self._reset_noise_scale: float = reset_noise_scale
 
@@ -84,6 +88,10 @@ class DarwinEnv(MujocoEnv, utils.EzPickle):
         self.observation_space = Box(
             low=-20, high=20, shape=(obs_size,), dtype=np.float64
         )
+
+        self.greaterX = 0
+        self.greaterY = 0
+        self.greaterZ = 0
 
         # Define a dict of ranges / min-max values for each action
         # self.joint_ranges = {
@@ -199,14 +207,25 @@ class DarwinEnv(MujocoEnv, utils.EzPickle):
     #     return self._forward_reward_weight * distance_traveled
 
     def turn_cost(self):
-        return np.linalg.norm(self.data.sensordata[3:6], ord=2)
+        # return np.linalg.norm(self.data.sensordata[3:6], ord=2)
+        turn_cost = math.pow(self.data.sensordata[3], 2) + math.pow(self.data.sensordata[4], 2) + math.pow(self.data.sensordata[5], 2)
+        # if math.pow(self.data.sensordata[3], 2) > self.greaterX:
+        #     self.greaterX = math.pow(self.data.sensordata[3], 2)
+        # if math.pow(self.data.sensordata[4], 2) > self.greaterY:
+        #     self.greaterY = math.pow(self.data.sensordata[4], 2)
+        # if math.pow(self.data.sensordata[5], 2) > self.greaterZ:
+        #     self.greaterZ = math.pow(self.data.sensordata[5], 2)
+
+        # print(f"Turn Cost X: { math.pow(self.data.sensordata[3], 2)} - Y: { math.pow(self.data.sensordata[4], 2)} - Z: { math.pow(self.data.sensordata[5], 2)}")
+        # print(f"Greater X: {self.greaterX} - Y: {self.greaterY} - Z: {self.greaterZ}")   
+        return self._turn_cost_weight * turn_cost
 
     def _get_rew(self):
         forward_reward = self.forward_reward()
         # distance_traveled = np.linalg.norm(self.data.qpos[0:2], ord=2)
         distance_traveled = self.data.qpos[0]
-        # turn_cost = self.turn_cost()
-        turn_cost = 0
+        turn_cost = self.turn_cost()
+        # turn_cost = 0
 
         reward = forward_reward + distance_traveled - turn_cost
 
