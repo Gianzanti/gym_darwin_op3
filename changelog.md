@@ -104,3 +104,8 @@
 
 - changed turn_cost_weight to 0.01
 - changed orientation_cost_weight to 0.01
+
+## v.0.1.23 - [24/12/2024]
+
+- changed turn_cost_weight to 0.03
+- changed orientation_cost_weight to 0.03
