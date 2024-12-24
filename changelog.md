@@ -85,3 +85,12 @@
 ## v.0.1.18 - [23/12/2024]
 
 - added turn_cost penalty only for y axis and with a different factor (0.1)
+
+## v.0.1.19 - [23/12/2024]
+
+- changed turn_cost default factor to 0.05
+
+## v.0.1.20 - [23/12/2024]
+
+- changed ankle limitation to 0.52 radians (30°)
+- changed z max limit to 0.31

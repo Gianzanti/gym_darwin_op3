@@ -36,8 +36,8 @@ class DarwinEnv(MujocoEnv, utils.EzPickle):
         default_camera_config: Dict[str, Union[float, int]] = DEFAULT_CAMERA_CONFIG,
         forward_reward_weight: float = 1.5,
         ctrl_cost_weight: float = 5e-2,
-        turn_cost_weight: float = 1e-1,
-        healthy_z_range: Tuple[float, float] = (0.260, 0.320),
+        turn_cost_weight: float = 5e-2,
+        healthy_z_range: Tuple[float, float] = (0.260, 0.310),
         reset_noise_scale: float = 1e-2,
         **kwargs):
 

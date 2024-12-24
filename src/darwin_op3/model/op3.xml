@@ -174,13 +174,13 @@
               <body name="l_ank_pitch_link" pos="0 0 -0.11">
                 <inertial pos="-0.02022 -0.01872 0.01214" quat="0.490852 0.502657 0.507842 0.498494" mass="0.17886"
                   diaginertia="0.000125243 0.000108598 4.65693e-05"/>
-                <joint name="l_ank_pitch" axis="0 -1 0" limited="true" range="-0.80 0.80"/>
+                <joint name="l_ank_pitch" axis="0 -1 0" limited="true" range="-0.52 0.52"/>
                 <geom mesh="ll5" class="visual"/>
                 <geom mesh="ll5c" class="collision"/>
                 <body name="l_ank_roll_link" pos="-0.0241 -0.019 0">
                   <inertial pos="0.02373 0.01037 -0.0276" quat="0.0078515 0.707601 0.0113965 0.706477" mass="0.06934"
                     diaginertia="0.000115818 7.87135e-05 4.03389e-05"/>
-                  <joint name="l_ank_roll" axis="1 0 0" limited="true" range="-0.80 0.80"/>
+                  <joint name="l_ank_roll" axis="1 0 0" limited="true" range="-0.52 0.52"/>
                   <geom mesh="ll6" class="visual"/>
                   <!-- <geom mesh="ll6c" class="collision" /> -->
                   <geom class="foot" pos="0.024 0.013 -0.0265" size="0.0635 0.028 0.004"/>
@@ -218,13 +218,13 @@
               <body name="r_ank_pitch_link" pos="0 0 -0.11">
                 <inertial pos="-0.02022 0.01872 0.01214" quat="0.498494 0.507842 0.502657 0.490852" mass="0.17886"
                   diaginertia="0.000125243 0.000108598 4.65693e-05"/>
-                <joint name="r_ank_pitch" axis="0 1 0" limited="true" range="-0.80 0.80"/>
+                <joint name="r_ank_pitch" axis="0 1 0" limited="true" range="-0.52 0.52"/>
                 <geom mesh="rl5" class="visual"/>
                 <geom mesh="rl5c" class="collision"/>
                 <body name="r_ank_roll_link" pos="-0.0241 0.019 0">
                   <inertial pos="0.02373 -0.01037 -0.0276" quat="-0.0078515 0.707601 -0.0113965 0.706477" mass="0.06934"
                     diaginertia="0.000115818 7.87135e-05 4.03389e-05"/>
-                  <joint name="r_ank_roll" axis="1 0 0" limited="true" range="-0.80 0.80"/>
+                  <joint name="r_ank_roll" axis="1 0 0" limited="true" range="-0.52 0.52"/>
                   <geom mesh="rl6" class="visual"/>
                   <!-- <geom mesh="rl6c" class="collision" /> -->
                   <geom class="foot" pos="0.024 -0.013 -0.0265" size="0.0635 0.028 0.004"/>
