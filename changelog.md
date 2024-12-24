@@ -94,3 +94,8 @@
 
 - changed ankle limitation to 0.52 radians (30°)
 - changed z max limit to 0.31
+
+## v.0.1.21 - [24/12/2024]
+
+- included orientation penalty
+- changed distance_traveled to the differente between current and last step on x axis

@@ -37,6 +37,7 @@ class DarwinEnv(MujocoEnv, utils.EzPickle):
         forward_reward_weight: float = 1.5,
         ctrl_cost_weight: float = 5e-2,
         turn_cost_weight: float = 5e-2,
+        orientation_cost_weight: float = 1e-1,
         healthy_z_range: Tuple[float, float] = (0.260, 0.310),
         reset_noise_scale: float = 1e-2,
         **kwargs):
@@ -48,6 +49,7 @@ class DarwinEnv(MujocoEnv, utils.EzPickle):
             forward_reward_weight,
             ctrl_cost_weight,
             turn_cost_weight,
+            orientation_cost_weight,
             healthy_z_range,
             reset_noise_scale,
             **kwargs
@@ -55,11 +57,12 @@ class DarwinEnv(MujocoEnv, utils.EzPickle):
         self._forward_reward_weight: float = forward_reward_weight
         self._ctrl_cost_weight: float = ctrl_cost_weight
         self._turn_cost_weight: float = turn_cost_weight
+        self._orientation_cost_weight: float = orientation_cost_weight
         self._healthy_z_range: Tuple[float, float] = healthy_z_range
         self._reset_noise_scale: float = reset_noise_scale
 
         self.velocity = np.zeros(2)
-        self.pos = np.zeros(3)
+        self.x_pos = 0
 
         xml_path = os.path.join(os.path.dirname(__file__), "..", "model", "scene.xml")
 
@@ -200,40 +203,35 @@ class DarwinEnv(MujocoEnv, utils.EzPickle):
     def forward_reward(self):
         return self._forward_reward_weight * self.velocity[0]
 
-    # def distance_traveled(self):
-    #     last_position = self.pos[0:2]
-    #     distance_traveled = np.linalg.norm(last_position - self.data.qpos[0:2], ord=2)
-    #     self.pos = self.data.qpos[0:2].copy()
-    #     return self._forward_reward_weight * distance_traveled
+    def distance_traveled(self):
+        last_position = self.x_pos
+        distance_traveled = last_position - self.data.qpos[0]
+        self.x_pos = self.data.qpos[0]
+        return self._forward_reward_weight * distance_traveled
 
-    def turn_cost(self):
-        # return np.linalg.norm(self.data.sensordata[3:6], ord=2)
-        # turn_cost = math.pow(self.data.sensordata[3], 2) + math.pow(self.data.sensordata[4], 2) + math.pow(self.data.sensordata[5], 2)
-        turn_cost = math.pow(self.data.sensordata[4], 2)
-        # if math.pow(self.data.sensordata[3], 2) > self.greaterX:
-        #     self.greaterX = math.pow(self.data.sensordata[3], 2)
-        # if math.pow(self.data.sensordata[4], 2) > self.greaterY:
-        #     self.greaterY = math.pow(self.data.sensordata[4], 2)
-        # if math.pow(self.data.sensordata[5], 2) > self.greaterZ:
-        #     self.greaterZ = math.pow(self.data.sensordata[5], 2)
+    def cost_y_axis_angular_velocity(self):
+        y_ang_vel = math.pow(self.data.sensordata[4], 2)
+        return self._turn_cost_weight * y_ang_vel
 
-        # print(f"Turn Cost X: { math.pow(self.data.sensordata[3], 2)} - Y: { math.pow(self.data.sensordata[4], 2)} - Z: { math.pow(self.data.sensordata[5], 2)}")
-        # print(f"Greater X: {self.greaterX} - Y: {self.greaterY} - Z: {self.greaterZ}")   
-        return self._turn_cost_weight * turn_cost
+    def cost_orientation(self):
+        orientation = math.pow(1 - self.data.qpos[3], 2)
+        return self._orientation_cost_weight * orientation
 
     def _get_rew(self):
         forward_reward = self.forward_reward()
-        # distance_traveled = np.linalg.norm(self.data.qpos[0:2], ord=2)
-        distance_traveled = self.data.qpos[0]
-        turn_cost = self.turn_cost()
+        # distance_traveled = self.data.qpos[0]
+        distance_traveled = self.distance_traveled()
+        y_vel_ang = self.cost_y_axis_angular_velocity()
+        x_orientation = self.cost_orientation()
         # turn_cost = 0
 
-        reward = forward_reward + distance_traveled - turn_cost
+        reward = forward_reward + distance_traveled - y_vel_ang - x_orientation
 
         reward_info = {
             "forward_reward": forward_reward,
             "distance_traveled": distance_traveled,
-            "turn_cost": turn_cost,
+            "y_vel_ang": y_vel_ang,
+            "x_orientation": x_orientation
         }
 
         return reward, reward_info
