@@ -99,3 +99,8 @@
 
 - included orientation penalty
 - changed distance_traveled to the differente between current and last step on x axis
+
+## v.0.1.22 - [24/12/2024]
+
+- changed turn_cost_weight to 0.01
+- changed orientation_cost_weight to 0.01
