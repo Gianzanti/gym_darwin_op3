@@ -210,7 +210,7 @@ class DarwinEnv(MujocoEnv, utils.EzPickle):
         last_position = self.x_pos
         distance_traveled = last_position - self.data.qpos[0]
         self.x_pos = self.data.qpos[0]
-        return self._forward_reward_weight * distance_traveled
+        return distance_traveled
 
     def cost_y_axis_angular_velocity(self):
         y_ang_vel = math.pow(self.data.sensordata[4], 2)

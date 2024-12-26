@@ -121,3 +121,7 @@
 - changed default ctrl_cost_weight to 0
 - changed default turn_cost_weight to 0
 - changed default orientation_cost_weight to 0
+
+## v.0.1.25 - [26/12/2024]
+
+- removed factor from distance_traveled reward
