@@ -125,3 +125,7 @@
 ## v.0.1.25 - [26/12/2024]
 
 - removed factor from distance_traveled reward
+
+## v.0.1.26 - [26/12/2024]
+
+- changed distance_traveled reward: if greather then zero = 1 else = 0
