@@ -109,3 +109,15 @@
 
 - changed turn_cost_weight to 0.03
 - changed orientation_cost_weight to 0.03
+
+## v.0.1.24 - [26/12/2024]
+
+- added com_inertia = self.data.cinert[1:].flatten()
+- and com_velocity = self.data.cvel[1:].flatten()
+- and actuator_forces = self.data.qfrc_actuator[6:].flatten()
+- to observation state
+
+- changed default forward_reward_weight to 0
+- changed default ctrl_cost_weight to 0
+- changed default turn_cost_weight to 0
+- changed default orientation_cost_weight to 0

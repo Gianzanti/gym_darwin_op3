@@ -21,7 +21,7 @@ wheels = [
 
 [[package]]
 name = "darwin-op3"
-version = "0.1.0"
+version = "0.1.23"
 source = { editable = "." }
 dependencies = [
     { name = "gymnasium" },

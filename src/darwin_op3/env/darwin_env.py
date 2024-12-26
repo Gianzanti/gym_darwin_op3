@@ -34,11 +34,11 @@ class DarwinEnv(MujocoEnv, utils.EzPickle):
         self,         
         frame_skip: int = 5,
         default_camera_config: Dict[str, Union[float, int]] = DEFAULT_CAMERA_CONFIG,
-        forward_reward_weight: float = 1.5,
-        ctrl_cost_weight: float = 5e-2,
-        turn_cost_weight: float = 3e-2,
-        orientation_cost_weight: float = 5e-2,
-        healthy_z_range: Tuple[float, float] = (0.260, 0.310),
+        forward_reward_weight: float = 0, #1.5,
+        ctrl_cost_weight: float = 0, #5e-2,
+        turn_cost_weight: float = 0, #3e-2,
+        orientation_cost_weight: float = 0, #5e-2,
+        healthy_z_range: Tuple[float, float] = (0.265, 0.315),
         reset_noise_scale: float = 1e-2,
         **kwargs):
 
@@ -85,12 +85,16 @@ class DarwinEnv(MujocoEnv, utils.EzPickle):
         }
 
         obs_size = self.data.qpos[2:].size + self.data.qvel[2:].size + self.data.sensordata.size
-        # self.observation_space = Box(
-        #     low=-np.inf, high=np.inf, shape=(obs_size,), dtype=np.float64
-        # )
+        obs_size += self.data.cinert[1:].size
+        obs_size += self.data.cvel[1:].size
+        obs_size += (self.data.qvel.size - 6)
+
         self.observation_space = Box(
-            low=-20, high=20, shape=(obs_size,), dtype=np.float64
+            low=-np.inf, high=np.inf, shape=(obs_size,), dtype=np.float64
         )
+        # self.observation_space = Box(
+        #     low=-20, high=20, shape=(obs_size,), dtype=np.float64
+        # )
 
         self.greaterX = 0
         self.greaterY = 0
@@ -176,7 +180,6 @@ class DarwinEnv(MujocoEnv, utils.EzPickle):
         # truncation=False as the time limit is handled by the `TimeLimit` wrapper added during `make`
         return observation, reward, terminated, False, info
 
-
     @property
     def is_healthy(self):
         min_z, max_z = self._healthy_z_range
@@ -236,7 +239,6 @@ class DarwinEnv(MujocoEnv, utils.EzPickle):
 
         return reward, reward_info
 
-
     # define what should happen when the model is reset (at the beginning of each episode)
     def reset_model(self):
         noise_low = -self._reset_noise_scale
@@ -278,8 +280,21 @@ class DarwinEnv(MujocoEnv, utils.EzPickle):
         position = self.data.qpos[2:]
         velocity = self.data.qvel[2:]
         imu = self.data.sensordata
-        return np.concatenate((position,velocity,imu))
-    
+        com_inertia = self.data.cinert[1:].flatten()
+        com_velocity = self.data.cvel[1:].flatten()
+        actuator_forces = self.data.qfrc_actuator[6:].flatten()
+
+        return np.concatenate(
+            (
+                position,
+                velocity,
+                imu,
+                com_inertia,
+                com_velocity,
+                actuator_forces,
+            )
+        )
+
     def _get_reset_info(self):
         # self.calculate_velocity_from_imu()
 
