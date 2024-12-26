@@ -129,3 +129,7 @@
 ## v.0.1.26 - [26/12/2024]
 
 - changed distance_traveled reward: if greather then zero = 1 else = 0
+
+## v.0.1.27 - [26/12/2024]
+
+- changed initial pose to only move arms
