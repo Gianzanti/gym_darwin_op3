@@ -34,7 +34,7 @@ class DarwinEnv(MujocoEnv, utils.EzPickle):
         self,         
         frame_skip: int = 5,
         default_camera_config: Dict[str, Union[float, int]] = DEFAULT_CAMERA_CONFIG,
-        distance_reward_weight: float = 100, #1.25,
+        distance_reward_weight: float = 1e3, #1.25,
         forward_reward_weight: float = 0, #1.5,
         ctrl_cost_weight: float = 0, #5e-2,
         turn_cost_weight: float = 0, #3e-2,
@@ -210,9 +210,11 @@ class DarwinEnv(MujocoEnv, utils.EzPickle):
         return self._forward_reward_weight * self.velocity[0]
 
     def distance_traveled(self):
-        last_position = self.x_pos
-        distance_traveled = self._distance_reward_weight * (last_position - self.data.qpos[0])
-        self.x_pos = self.data.qpos[0]
+        # last_position = self.x_pos
+        # distance_traveled = self._distance_reward_weight * (last_position - self.data.qpos[0])
+        distance_traveled = self.data.qpos[0]
+        # self.x_pos = self.data.qpos[0]
+        # distance_traveled = np.linalg.norm(self.data.qpos[0:2], ord=2)
         # print(f"Distance traveled: {distance_traveled}")
         return distance_traveled
 
