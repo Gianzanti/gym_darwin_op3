@@ -34,8 +34,8 @@ class DarwinEnv(MujocoEnv, utils.EzPickle):
         self,         
         frame_skip: int = 5,
         default_camera_config: Dict[str, Union[float, int]] = DEFAULT_CAMERA_CONFIG,
-        distance_reward_weight: float = 1e3, #1.25,
-        forward_reward_weight: float = 0, #1.5,
+        distance_reward_weight: float = 0, #1.25,
+        forward_reward_weight: float = 2.5, #1.5,
         ctrl_cost_weight: float = 0, #5e-2,
         turn_cost_weight: float = 0, #3e-2,
         orientation_cost_weight: float = 0, #5e-2,
@@ -228,8 +228,8 @@ class DarwinEnv(MujocoEnv, utils.EzPickle):
 
     def _get_rew(self):
         forward_reward = self.forward_reward()
-        # distance_traveled = self.data.qpos[0]
-        distance_traveled = self.distance_traveled()
+        distance_traveled = 0
+        # distance_traveled = self.distance_traveled()
         y_vel_ang = self.cost_y_axis_angular_velocity()
         x_orientation = self.cost_orientation()
         # turn_cost = 0
