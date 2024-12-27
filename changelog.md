@@ -137,3 +137,7 @@
 ## v.0.1.28 - [26/12/2024]
 
 - changed distance_traveled reward: distance from origin
+
+## v.0.1.29 - [26/12/2024]
+
+- changed distance_traveled reward: distance from origin * 100

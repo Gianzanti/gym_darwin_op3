@@ -34,6 +34,7 @@ class DarwinEnv(MujocoEnv, utils.EzPickle):
         self,         
         frame_skip: int = 5,
         default_camera_config: Dict[str, Union[float, int]] = DEFAULT_CAMERA_CONFIG,
+        distance_reward_weight: float = 100, #1.25,
         forward_reward_weight: float = 0, #1.5,
         ctrl_cost_weight: float = 0, #5e-2,
         turn_cost_weight: float = 0, #3e-2,
@@ -46,6 +47,7 @@ class DarwinEnv(MujocoEnv, utils.EzPickle):
             self, 
             frame_skip,
             default_camera_config,
+            distance_reward_weight,
             forward_reward_weight,
             ctrl_cost_weight,
             turn_cost_weight,
@@ -54,6 +56,7 @@ class DarwinEnv(MujocoEnv, utils.EzPickle):
             reset_noise_scale,
             **kwargs
         )
+        self._distance_reward_weight: float = distance_reward_weight
         self._forward_reward_weight: float = forward_reward_weight
         self._ctrl_cost_weight: float = ctrl_cost_weight
         self._turn_cost_weight: float = turn_cost_weight
@@ -208,13 +211,9 @@ class DarwinEnv(MujocoEnv, utils.EzPickle):
 
     def distance_traveled(self):
         last_position = self.x_pos
-        distance_traveled = last_position - self.data.qpos[0]
+        distance_traveled = self._distance_reward_weight * (last_position - self.data.qpos[0])
         self.x_pos = self.data.qpos[0]
         # print(f"Distance traveled: {distance_traveled}")
-        # if distance_traveled > 0:
-        #     distance_traveled = 1
-        # else:
-        #     distance_traveled = 0
         return distance_traveled
 
     def cost_y_axis_angular_velocity(self):
