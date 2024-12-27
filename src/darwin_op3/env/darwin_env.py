@@ -210,10 +210,11 @@ class DarwinEnv(MujocoEnv, utils.EzPickle):
         last_position = self.x_pos
         distance_traveled = last_position - self.data.qpos[0]
         self.x_pos = self.data.qpos[0]
-        if distance_traveled > 0:
-            distance_traveled = 1
-        else:
-            distance_traveled = 0
+        # print(f"Distance traveled: {distance_traveled}")
+        # if distance_traveled > 0:
+        #     distance_traveled = 1
+        # else:
+        #     distance_traveled = 0
         return distance_traveled
 
     def cost_y_axis_angular_velocity(self):
