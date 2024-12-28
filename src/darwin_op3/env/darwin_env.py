@@ -27,7 +27,7 @@ class DarwinEnv(MujocoEnv, utils.EzPickle):
             "rgb_array",
             "depth_array",
         ],
-        "render_fps": 200,
+        "render_fps": 100,
     }
 
     def __init__(
@@ -78,6 +78,8 @@ class DarwinEnv(MujocoEnv, utils.EzPickle):
             default_camera_config=DEFAULT_CAMERA_CONFIG,
             **kwargs
         )
+
+        # dt = self.model.opt.timestep * self.frame_skip = 0.001 * 5 = 1 / 0.005 = 200
 
         self.metadata = {
             "render_modes": [
@@ -176,6 +178,7 @@ class DarwinEnv(MujocoEnv, utils.EzPickle):
             "x_velocity": self.velocity[0],
             "y_velocity": self.velocity[1],
             "distance_from_origin": np.linalg.norm(self.data.qpos[0:2], ord=2),
+            "dt": self.dt,
             **reward_info,
         }
 
@@ -304,4 +307,5 @@ class DarwinEnv(MujocoEnv, utils.EzPickle):
             "x_velocity": 0,
             "y_velocity": 0,
             "distance_from_origin": np.linalg.norm(self.data.qpos[0:2], ord=2),
+            "dt": self.dt,
         }        

@@ -295,4 +295,13 @@
 
 ## v.0.1.34 - [28/12/2024]
 
-- changed render_fps metada
+- changed render_fps metadata to 200
+
+## v.0.1.35 - [28/12/2024]
+
+- changed render_fps metadata to 100
+- changed odel options:  
+
+    ```xml
+        <option gravity="0 0 -9.81" integrator="RK4" iterations="50" solver="PGS"/>
+    ```

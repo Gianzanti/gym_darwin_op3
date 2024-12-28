@@ -181,9 +181,10 @@ class TestRobotisEnv(unittest.TestCase):
            
             # print(f"Observation: {observation}")
             print(f"Reward: {reward}")
+            # print(f"dt: {env.spec}")
             # print(f"Terminated: {terminated}")
             # print(f"Truncated: {truncated}")
-            # print(f"Info: {info}")
+            print(f"Info: {info}")
             episode_over = counter > 1000
             counter += 1
 

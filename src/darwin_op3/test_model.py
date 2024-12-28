@@ -118,6 +118,7 @@ class TestModel(unittest.TestCase):
                     print(f"Velocity: {data.cvel[1:]}")
                     print(f"Actuator forces: {data.qfrc_actuator[6:]}")
                     print(f"Sensor data: {data.sensordata}")
+                    print(f"Dt: {data.dt}")
                     if data.sensordata[2] > 2:
                         done = True
 
