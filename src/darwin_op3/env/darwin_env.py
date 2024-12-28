@@ -27,7 +27,7 @@ class DarwinEnv(MujocoEnv, utils.EzPickle):
             "rgb_array",
             "depth_array",
         ],
-        "render_fps": 100,
+        "render_fps": 200,
     }
 
     def __init__(

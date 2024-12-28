@@ -292,3 +292,7 @@
 ## v.0.1.33 - [28/12/2024]
 
 - changed timestep to 0.001
+
+## v.0.1.34 - [28/12/2024]
+
+- changed render_fps metada
