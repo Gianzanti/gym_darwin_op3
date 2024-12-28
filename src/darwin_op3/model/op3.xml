@@ -1,6 +1,6 @@
 <mujoco model="robotis_op3">
   <compiler angle="radian" meshdir="assets" autolimits="true"/>
-  <option gravity="0 0 -9.81" />
+  <option gravity="0 0 -9.81" integrator="RK4" iterations="50" solver="PGS" timestep="0.003" />
 
   <asset>
     <material name="black" rgba="0.2 0.2 0.2 1"/>
@@ -61,7 +61,7 @@
     <joint damping="1.084" armature="0.045" frictionloss="0.03"/>
     <site group="5" type="sphere"/>
     <!-- <position kp="21.1" ctrlrange="-3.141592 3.141592" forcerange="-4 4"/> -->
-    <motor gear="1" ctrllimited="true" ctrlrange="-5 5" />
+    <motor gear="2" ctrllimited="true" ctrlrange="-3 3" />
     <default class="collision">
       <geom group="3"/>
       <default class="foot">

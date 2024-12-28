@@ -66,6 +66,7 @@ class DarwinEnv(MujocoEnv, utils.EzPickle):
 
         self.velocity = np.zeros(2)
         self.x_pos = 0
+        self._motor_limit = 3
 
         xml_path = os.path.join(os.path.dirname(__file__), "..", "model", "scene.xml")
 
@@ -159,7 +160,7 @@ class DarwinEnv(MujocoEnv, utils.EzPickle):
         #     action[i] = normalized_action[i] * (joint_range["range"]/2)
 
         # action = normalized_action * np.pi 
-        self.do_simulation(normalized_action * 5, self.frame_skip)
+        self.do_simulation(normalized_action * self._motor_limit, self.frame_skip)
         xy_position_after = mass_center(self.model, self.data)
 
         self.velocity = (xy_position_after - xy_position_before) / self.dt
