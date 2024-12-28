@@ -300,8 +300,16 @@
 ## v.0.1.35 - [28/12/2024]
 
 - changed render_fps metadata to 100
-- changed odel options:  
+- changed model options:  
 
     ```xml
         <option gravity="0 0 -9.81" integrator="RK4" iterations="50" solver="PGS"/>
+    ```
+
+## v.0.1.36 - [28/12/2024]
+
+- changed model options:  
+
+    ```xml
+        <option gravity="0 0 -9.81" integrator="RK4"/>
     ```
