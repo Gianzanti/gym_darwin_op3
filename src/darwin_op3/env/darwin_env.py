@@ -37,7 +37,7 @@ class DarwinEnv(MujocoEnv, utils.EzPickle):
         distance_reward_weight: float = 0, #1.25,
         forward_reward_weight: float = 2.5, #1.5,
         ctrl_cost_weight: float = 0, #5e-2,
-        turn_cost_weight: float = 3e-2,
+        turn_cost_weight: float = 5e-2,
         orientation_cost_weight: float = 0, #5e-2,
         healthy_z_range: Tuple[float, float] = (0.270, 0.310),
         reset_noise_scale: float = 1e-2,
@@ -93,7 +93,7 @@ class DarwinEnv(MujocoEnv, utils.EzPickle):
         obs_size = self.data.qpos[2:].size + self.data.qvel[2:].size + self.data.sensordata.size
         obs_size += self.data.cinert[1:].size
         obs_size += self.data.cvel[1:].size
-        obs_size += (self.data.qvel.size - 6)
+        # obs_size += (self.data.qvel.size - 6)
 
         self.observation_space = Box(
             low=-np.inf, high=np.inf, shape=(obs_size,), dtype=np.float64
@@ -283,7 +283,7 @@ class DarwinEnv(MujocoEnv, utils.EzPickle):
         imu = self.data.sensordata
         com_inertia = self.data.cinert[1:].flatten()
         com_velocity = self.data.cvel[1:].flatten()
-        actuator_forces = self.data.qfrc_actuator[6:].flatten()
+        # actuator_forces = self.data.qfrc_actuator[6:].flatten()
 
         return np.concatenate(
             (
@@ -292,7 +292,7 @@ class DarwinEnv(MujocoEnv, utils.EzPickle):
                 imu,
                 com_inertia,
                 com_velocity,
-                actuator_forces,
+                # actuator_forces,
             )
         )
 
