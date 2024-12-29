@@ -111,15 +111,16 @@ class TestModel(unittest.TestCase):
 
                 # print sensor data
                 # print(data.sensordata)
-                if not done:
-                    print (f"qpos: {data.qpos[2:]}")
+                # if not done:
+                    # print (f"qpos: {data.qpos[2:]}")
+                print (f"qpos: {data.qpos[3:7]}")
                     # print (f"qvel: {data.qvel[2:]}")
                     # print(f"Inertia: {data.cinert[1:]}")
                     # print(f"Velocity: {data.cvel[1:]}")
                     # print(f"Actuator forces: {data.qfrc_actuator[6:]}")
-                    print(f"Sensor data: {data.sensordata}")
-                    if data.sensordata[2] > 5:
-                        done = True
+                    # print(f"Sensor data: {data.sensordata}")
+                    # if data.sensordata[2] > 5:
+                    #     done = True
 
 
                 # mj_step can be replaced with code that also evaluates
