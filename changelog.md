@@ -318,3 +318,7 @@
 
 - changed health limits to (0.270, 0.310)
 - changed orientation_cost_weight to 5e-2
+
+## v.0.1.38 - [28/12/2024]
+
+- changed turn_cost_weight to 3e-2

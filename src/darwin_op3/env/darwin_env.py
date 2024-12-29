@@ -37,8 +37,8 @@ class DarwinEnv(MujocoEnv, utils.EzPickle):
         distance_reward_weight: float = 0, #1.25,
         forward_reward_weight: float = 2.5, #1.5,
         ctrl_cost_weight: float = 0, #5e-2,
-        turn_cost_weight: float = 0, #3e-2,
-        orientation_cost_weight: float = 5e-2,
+        turn_cost_weight: float = 3e-2,
+        orientation_cost_weight: float = 0, #5e-2,
         healthy_z_range: Tuple[float, float] = (0.270, 0.310),
         reset_noise_scale: float = 1e-2,
         **kwargs):
