@@ -327,3 +327,7 @@
 
 - removed qfrc_actuator as observation state
 - changed turn_cost_weight to 5e-2
+
+## v.0.1.40 - [29/12/2024]
+
+- changed turn_cost_weight to 1
