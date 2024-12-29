@@ -313,3 +313,8 @@
     ```xml
         <option gravity="0 0 -9.81" integrator="RK4"/>
     ```
+
+## v.0.1.37 - [28/12/2024]
+
+- changed health limits to (0.270, 0.310)
+- changed orientation_cost_weight to 5e-2

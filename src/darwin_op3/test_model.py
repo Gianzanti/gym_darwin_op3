@@ -113,13 +113,12 @@ class TestModel(unittest.TestCase):
                 # print(data.sensordata)
                 if not done:
                     print (f"qpos: {data.qpos[2:]}")
-                    print (f"qvel: {data.qvel[2:]}")
-                    print(f"Inertia: {data.cinert[1:]}")
-                    print(f"Velocity: {data.cvel[1:]}")
-                    print(f"Actuator forces: {data.qfrc_actuator[6:]}")
+                    # print (f"qvel: {data.qvel[2:]}")
+                    # print(f"Inertia: {data.cinert[1:]}")
+                    # print(f"Velocity: {data.cvel[1:]}")
+                    # print(f"Actuator forces: {data.qfrc_actuator[6:]}")
                     print(f"Sensor data: {data.sensordata}")
-                    print(f"Dt: {data.dt}")
-                    if data.sensordata[2] > 2:
+                    if data.sensordata[2] > 5:
                         done = True
 
 
