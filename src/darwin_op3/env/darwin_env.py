@@ -37,9 +37,9 @@ class DarwinEnv(MujocoEnv, utils.EzPickle):
         distance_reward_weight: float = 0, #1.25,
         forward_reward_weight: float = 2.5, #1.5,
         ctrl_cost_weight: float = 0, #5e-2,
-        turn_cost_weight: float = 1, #5e-2,
-        orientation_cost_weight: float = 1, #5e-2,
-        healthy_z_range: Tuple[float, float] = (0.270, 0.310),
+        turn_cost_weight: float = 1.25, #5e-2,
+        orientation_cost_weight: float = 1.25, #5e-2,
+        healthy_z_range: Tuple[float, float] = (0.270, 0.290),
         reset_noise_scale: float = 1e-2,
         **kwargs):
 
@@ -227,24 +227,32 @@ class DarwinEnv(MujocoEnv, utils.EzPickle):
         return self._turn_cost_weight * y_ang_vel
 
     def cost_orientation(self):
-        orientation = math.pow(1 - self.data.qpos[3], 2)
-        return self._orientation_cost_weight * orientation
+        angle_rotation = 2 * math.acos(self.data.qpos[3])
+        penalty = self._orientation_cost_weight * math.pow(angle_rotation, 2)
+        return penalty
+
+        # orientation_w = math.pow(1 - self.data.qpos[3], 2)
+        # orientation_x = math.pow(self.data.qpos[4], 2)
+        # orientation_y = math.pow(self.data.qpos[5], 2)
+        # orientation_z = math.pow(self.data.qpos[6], 2)
+        # return self._orientation_cost_weight * (orientation_x + orientation_y + orientation_z)
 
     def _get_rew(self):
         forward_reward = self.forward_reward()
-        distance_traveled = 0
-        # distance_traveled = self.distance_traveled()
-        y_vel_ang = self.cost_y_axis_angular_velocity()
-        x_orientation = self.cost_orientation()
+        # distance_traveled = 0
+        distance_traveled = self.distance_traveled()
+        # y_vel_ang = self.cost_y_axis_angular_velocity()
+        y_vel_ang = 0
+        orientation_penalty = self.cost_orientation()
         # turn_cost = 0
 
-        reward = forward_reward + distance_traveled - y_vel_ang - x_orientation
+        reward = forward_reward + distance_traveled - y_vel_ang - orientation_penalty
 
         reward_info = {
             "forward_reward": forward_reward,
             "distance_traveled": distance_traveled,
             "y_vel_ang": y_vel_ang,
-            "x_orientation": x_orientation
+            "orientation_penalty": orientation_penalty
         }
 
         return reward, reward_info

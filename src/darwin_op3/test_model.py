@@ -113,7 +113,10 @@ class TestModel(unittest.TestCase):
                 # print(data.sensordata)
                 # if not done:
                     # print (f"qpos: {data.qpos[2:]}")
-                print (f"qpos: {data.qpos[3:7]}")
+                print (f"Z Axis: {data.qpos[2]}")
+                print (f"Orientation: {data.qpos[3:7]}")
+                print (f"Gyro: {data.sensordata[3:6]}")
+                print (f"Acceleration: {data.sensordata[0:3]}")
                     # print (f"qvel: {data.qvel[2:]}")
                     # print(f"Inertia: {data.cinert[1:]}")
                     # print(f"Velocity: {data.cvel[1:]}")

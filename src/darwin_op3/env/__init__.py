@@ -1,3 +1,5 @@
+import importlib.metadata
+
 from gymnasium.envs.registration import find_highest_version, register
 
 env_name = "DarwinOp3"
@@ -15,3 +17,4 @@ if env_id is None:
     )
     print(f"Registered environment {env}")
 
+print(importlib.metadata.version("darwin-op3"))

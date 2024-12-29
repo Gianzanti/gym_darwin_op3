@@ -335,3 +335,11 @@
 ## v.0.1.41 - [29/12/2024]
 
 - changed orientation_cost_weight to 1
+
+## v.0.1.42 - [29/12/2024]
+
+- turn_cost_weight: float = 1.25, #5e-2,
+- orientation_cost_weight: float = 1.25, #5e-2,
+- healthy_z_range: Tuple[float, float] = (0.270, 0.290),
+- enabled distance traveled
+- changed calculation for orientation penalty
