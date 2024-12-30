@@ -256,7 +256,7 @@ class DarwinEnv(MujocoEnv, utils.EzPickle):
         if acceleration_diff_magnitude > self._rotation_threshold:
             # rotation_penalty = self._rotation_weight * np.linalg.norm(rotational_acceleration) 
             # rotation_penalty = self._rotation_weight * rotational_acceleration[0]
-            rotation_penalty = abs(rotational_acceleration[0])
+            rotation_penalty = self._rotation_weight * abs(rotational_acceleration[0])
 
         return rotation_penalty
 
