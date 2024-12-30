@@ -240,8 +240,8 @@ class DarwinEnv(MujocoEnv, utils.EzPickle):
         # Calculate the difference between measured acceleration and gravity
         acceleration_diff = linear_acceleration - gravity_vector
         # print(f"Acceleration Diff: {acceleration_diff}")
-        if (acceleration_diff[2] > 10):
-            return 0.0
+        # if (acceleration_diff[2] > 10):
+        #     return 0.0
         
         # Calculate the magnitude of the difference
         acceleration_diff_magnitude = np.linalg.norm(acceleration_diff)
@@ -254,7 +254,9 @@ class DarwinEnv(MujocoEnv, utils.EzPickle):
         # Calculate the rotation penalty.
         rotation_penalty = 0.0
         if acceleration_diff_magnitude > self._rotation_threshold:
-            rotation_penalty = self._rotation_weight * np.linalg.norm(rotational_acceleration) 
+            # rotation_penalty = self._rotation_weight * np.linalg.norm(rotational_acceleration) 
+            # rotation_penalty = self._rotation_weight * rotational_acceleration[0]
+            rotation_penalty = rotational_acceleration[0]
 
         return rotation_penalty
 

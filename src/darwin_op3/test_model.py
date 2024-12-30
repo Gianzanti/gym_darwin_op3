@@ -32,11 +32,19 @@ def rotation_penalty(linear_acceleration, rotation_threshold=0.1):
     rotational_acceleration = acceleration_diff - projected_acceleration
     # ic(rotational_acceleration)
 
+    x_axis_rotational_acceleration = rotational_acceleration[0] # Roll
+    ic(x_axis_rotational_acceleration)
+    y_axis_rotational_acceleration = rotational_acceleration[1] # Pitch
+    ic(y_axis_rotational_acceleration)
+    z_axis_rotational_acceleration = rotational_acceleration[2] # Yaw
+    ic(z_axis_rotational_acceleration)  
+
     # Calculate the rotation penalty.
     # This is a simple example, and you may need to adjust the weights and thresholds based on your specific needs.
     rotation_penalty = 0.0
     if acceleration_diff_magnitude > rotation_threshold:
-        rotation_penalty = np.linalg.norm(rotational_acceleration) 
+        # rotation_penalty = np.linalg.norm(rotational_acceleration) 
+        rotation_penalty = x_axis_rotational_acceleration
     else:
         rotation_penalty = 0.0  # No penalty for significant linear motion
 
@@ -174,7 +182,7 @@ class TestModel(unittest.TestCase):
                 # print(f"Angle Rotation: {angle_rotation}")
                 # penalty = 1.25 * math.pow(angle_rotation, 2)
                 # print(f"Penalty Orientation: {penalty}")
-                # rotation_penalty(data.sensordata[0:3])
+                rotation_penalty(data.sensordata[0:3])
 
 
                 # mj_step can be replaced with code that also evaluates
