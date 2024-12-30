@@ -149,6 +149,8 @@ class TestModel(unittest.TestCase):
                 # print(data.sensordata)
                 # if not done:
                 print (f"qpos: {data.qpos[2]}")
+                min_z, max_z = (0.265, 0.300)
+                print(f"Is healthy: {min_z < data.qpos[2] < max_z}")
                 # print (f"Z Axis: {data.qpos[2]}")
                 # print (f"Orientation: {data.qpos[3:7]}")
                 # print (f"Gyro: {data.sensordata[3:6]}")
