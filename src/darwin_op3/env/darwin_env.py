@@ -39,6 +39,7 @@ class DarwinEnv(MujocoEnv, utils.EzPickle):
         turn_cost_weight: float = 1.25, #5e-2,
         orientation_cost_weight: float = 1, #5e-2,
         rotation_threshold: float = 2,
+        rotation_weight: float = 1e-1,
         healthy_z_range: Tuple[float, float] = (0.260, 0.310),
         reset_noise_scale: float = 1e-2,
         **kwargs):
@@ -53,6 +54,7 @@ class DarwinEnv(MujocoEnv, utils.EzPickle):
             turn_cost_weight,
             orientation_cost_weight,
             rotation_threshold,
+            rotation_weight,
             healthy_z_range,
             reset_noise_scale,
             **kwargs
@@ -63,6 +65,7 @@ class DarwinEnv(MujocoEnv, utils.EzPickle):
         self._turn_cost_weight: float = turn_cost_weight
         self._orientation_cost_weight: float = orientation_cost_weight
         self._rotation_threshold: float = rotation_threshold
+        self._rotation_weight: float = rotation_weight
         self._healthy_z_range: Tuple[float, float] = healthy_z_range
         self._reset_noise_scale: float = reset_noise_scale
 
@@ -251,7 +254,7 @@ class DarwinEnv(MujocoEnv, utils.EzPickle):
         # Calculate the rotation penalty.
         rotation_penalty = 0.0
         if acceleration_diff_magnitude > self._rotation_threshold:
-            rotation_penalty = np.linalg.norm(rotational_acceleration) 
+            rotation_penalty = self._rotation_weight * np.linalg.norm(rotational_acceleration) 
 
         return rotation_penalty
 
