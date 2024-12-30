@@ -40,7 +40,7 @@ class DarwinEnv(MujocoEnv, utils.EzPickle):
         turn_cost_weight: float = 1.25, #5e-2,
         orientation_cost_weight: float = 1, #5e-2,
         rotation_threshold: float = 2,
-        healthy_z_range: Tuple[float, float] = (0.270, 0.290),
+        healthy_z_range: Tuple[float, float] = (0.265, 0.300),
         reset_noise_scale: float = 1e-2,
         **kwargs):
 
