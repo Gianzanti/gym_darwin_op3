@@ -2,7 +2,6 @@ import math
 import os
 from typing import Dict, Tuple, Union
 
-import icecream as ic
 import numpy as np
 from gymnasium import utils
 from gymnasium.envs.mujoco import MujocoEnv
@@ -68,9 +67,9 @@ class DarwinEnv(MujocoEnv, utils.EzPickle):
         self._reset_noise_scale: float = reset_noise_scale
 
         self.velocity = np.zeros(2)
-        self.x_pos = 0
+        # self.x_pos = 0
         self._motor_limit = 3
-        self.already_touch_ground = False
+        # self.already_touch_ground = False
 
         xml_path = os.path.join(os.path.dirname(__file__), "..", "model", "scene.xml")
 
@@ -97,7 +96,6 @@ class DarwinEnv(MujocoEnv, utils.EzPickle):
         obs_size = self.data.qpos[2:].size + self.data.qvel[2:].size + self.data.sensordata.size
         obs_size += self.data.cinert[1:].size
         obs_size += self.data.cvel[1:].size
-        # obs_size += (self.data.qvel.size - 6)
 
         self.observation_space = Box(
             low=-np.inf, high=np.inf, shape=(obs_size,), dtype=np.float64
@@ -105,10 +103,6 @@ class DarwinEnv(MujocoEnv, utils.EzPickle):
         # self.observation_space = Box(
         #     low=-20, high=20, shape=(obs_size,), dtype=np.float64
         # )
-
-        self.greaterX = 0
-        self.greaterY = 0
-        self.greaterZ = 0
 
         # Define a dict of ranges / min-max values for each action
         # self.joint_ranges = {
@@ -279,8 +273,8 @@ class DarwinEnv(MujocoEnv, utils.EzPickle):
         distance_traveled = 0
         # distance_traveled = self.distance_traveled()
         rotation_penalty = self.rotation_penalty()
-        # reward = forward_reward + distance_traveled - rotation_penalty
-        reward = 1
+        reward = forward_reward + distance_traveled - rotation_penalty
+        # reward = 1
 
         reward_info = {
             "forward_reward": forward_reward,
