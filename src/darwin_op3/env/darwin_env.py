@@ -273,8 +273,8 @@ class DarwinEnv(MujocoEnv, utils.EzPickle):
 
     def _get_rew(self):
         forward_reward = self.forward_reward()
-        distance_traveled = 0
-        # distance_traveled = self.distance_traveled()
+        # distance_traveled = 0
+        distance_traveled = self.distance_traveled()
         rotation_penalty = self.rotation_penalty()
         reward = forward_reward + distance_traveled - rotation_penalty
         # reward = 1
