@@ -343,3 +343,12 @@
 - healthy_z_range: Tuple[float, float] = (0.270, 0.290),
 - enabled distance traveled
 - changed calculation for orientation penalty
+
+## v.0.1.47 - [30/12/2024]
+
+- removed turn_cost and orientation_cost
+- added rotation_penalty
+
+## v.0.1.48 - [30/12/2024]
+
+- adjusting rotation_penalty

@@ -17,4 +17,4 @@ if env_id is None:
     )
     print(f"Registered environment {env}")
 
-print(importlib.metadata.version("darwin-op3"))
+print(f"DarwinOp3 Env version: {importlib.metadata.version('darwin-op3')}")

@@ -2,6 +2,7 @@ import math
 import os
 from typing import Dict, Tuple, Union
 
+import icecream as ic
 import numpy as np
 from gymnasium import utils
 from gymnasium.envs.mujoco import MujocoEnv
@@ -18,7 +19,6 @@ def mass_center(model, data):
     mass = np.expand_dims(model.body_mass, axis=1)
     xpos = data.xipos
     return (np.sum(mass * xpos, axis=0) / np.sum(mass))[0:2].copy()
-
 
 class DarwinEnv(MujocoEnv, utils.EzPickle):
     metadata = {
@@ -38,7 +38,8 @@ class DarwinEnv(MujocoEnv, utils.EzPickle):
         forward_reward_weight: float = 2.5, #1.5,
         ctrl_cost_weight: float = 0, #5e-2,
         turn_cost_weight: float = 1.25, #5e-2,
-        orientation_cost_weight: float = 1.25, #5e-2,
+        orientation_cost_weight: float = 1, #5e-2,
+        rotation_threshold: float = 2,
         healthy_z_range: Tuple[float, float] = (0.270, 0.290),
         reset_noise_scale: float = 1e-2,
         **kwargs):
@@ -52,6 +53,7 @@ class DarwinEnv(MujocoEnv, utils.EzPickle):
             ctrl_cost_weight,
             turn_cost_weight,
             orientation_cost_weight,
+            rotation_threshold,
             healthy_z_range,
             reset_noise_scale,
             **kwargs
@@ -61,12 +63,14 @@ class DarwinEnv(MujocoEnv, utils.EzPickle):
         self._ctrl_cost_weight: float = ctrl_cost_weight
         self._turn_cost_weight: float = turn_cost_weight
         self._orientation_cost_weight: float = orientation_cost_weight
+        self._rotation_threshold: float = rotation_threshold
         self._healthy_z_range: Tuple[float, float] = healthy_z_range
         self._reset_noise_scale: float = reset_noise_scale
 
         self.velocity = np.zeros(2)
         self.x_pos = 0
         self._motor_limit = 3
+        self.already_touch_ground = False
 
         xml_path = os.path.join(os.path.dirname(__file__), "..", "model", "scene.xml")
 
@@ -152,6 +156,8 @@ class DarwinEnv(MujocoEnv, utils.EzPickle):
 
     # determine the reward depending on observation or other properties of the simulation
     def step(self, normalized_action):
+
+
         xy_position_before = mass_center(self.model, self.data)
         
         # Normalize action to its range
@@ -226,9 +232,40 @@ class DarwinEnv(MujocoEnv, utils.EzPickle):
         y_ang_vel = math.pow(self.data.sensordata[4], 2)
         return self._turn_cost_weight * y_ang_vel
 
+    def rotation_penalty(self):
+        if np.sum(self.data.cfrc_ext) == 0:
+            return 0.0
+        
+        linear_acceleration = self.data.sensordata[0:3]
+        # print(f"Linear Acceleration: {linear_acceleration}")
+        # Calculate the gravity vector (assuming z-axis is upwards)
+        gravity_vector = np.array([0.0, 0.0, 9.81]) 
+        # Calculate the difference between measured acceleration and gravity
+        acceleration_diff = linear_acceleration - gravity_vector
+        # print(f"Acceleration Diff: {acceleration_diff}")
+        if (acceleration_diff[2] > 10):
+            return 0.0
+        
+        # Calculate the magnitude of the difference
+        acceleration_diff_magnitude = np.linalg.norm(acceleration_diff)
+        # Calculate the projected acceleration onto the gravity vector
+        projected_acceleration = np.dot(acceleration_diff, gravity_vector) / np.linalg.norm(gravity_vector) * gravity_vector
+        # print(f"Projected Acceleration: {projected_acceleration}")
+        # Calculate the rotational component of acceleration
+        rotational_acceleration = acceleration_diff - projected_acceleration
+
+        # Calculate the rotation penalty.
+        rotation_penalty = 0.0
+        if acceleration_diff_magnitude > self._rotation_threshold:
+            rotation_penalty = np.linalg.norm(rotational_acceleration) 
+
+        return rotation_penalty
+
     def cost_orientation(self):
         angle_rotation = 2 * math.acos(self.data.qpos[3])
+        # print(f"Angle Rotation: {angle_rotation}")
         penalty = self._orientation_cost_weight * math.pow(angle_rotation, 2)
+        # print(f"Penalty Orientation: {penalty}")
         return penalty
 
         # orientation_w = math.pow(1 - self.data.qpos[3], 2)
@@ -239,20 +276,16 @@ class DarwinEnv(MujocoEnv, utils.EzPickle):
 
     def _get_rew(self):
         forward_reward = self.forward_reward()
-        # distance_traveled = 0
-        distance_traveled = self.distance_traveled()
-        # y_vel_ang = self.cost_y_axis_angular_velocity()
-        y_vel_ang = 0
-        orientation_penalty = self.cost_orientation()
-        # turn_cost = 0
-
-        reward = forward_reward + distance_traveled - y_vel_ang - orientation_penalty
+        distance_traveled = 0
+        # distance_traveled = self.distance_traveled()
+        rotation_penalty = self.rotation_penalty()
+        # reward = forward_reward + distance_traveled - rotation_penalty
+        reward = 1
 
         reward_info = {
             "forward_reward": forward_reward,
             "distance_traveled": distance_traveled,
-            "y_vel_ang": y_vel_ang,
-            "orientation_penalty": orientation_penalty
+            "rotation_penalty": rotation_penalty,
         }
 
         return reward, reward_info
@@ -317,3 +350,4 @@ class DarwinEnv(MujocoEnv, utils.EzPickle):
             "distance_from_origin": np.linalg.norm(self.data.qpos[0:2], ord=2),
             "dt": self.dt,
         }        
+    
