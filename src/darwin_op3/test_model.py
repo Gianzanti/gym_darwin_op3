@@ -6,12 +6,11 @@ import unittest
 import mujoco
 import mujoco.viewer
 import numpy as np
-from icecream import ic
 
 model_path = os.path.join(os.path.dirname(__file__), "model", "scene.xml")
 
 def rotation_penalty(linear_acceleration, rotation_threshold=0.1):
-    ic(linear_acceleration)
+    # ic(linear_acceleration)
 
     # Calculate the gravity vector (assuming z-axis is upwards)
     gravity_vector = np.array([0.0, 0.0, 9.81]) 
@@ -33,11 +32,11 @@ def rotation_penalty(linear_acceleration, rotation_threshold=0.1):
     # ic(rotational_acceleration)
 
     x_axis_rotational_acceleration = rotational_acceleration[0] # Roll
-    ic(x_axis_rotational_acceleration)
+    # ic(x_axis_rotational_acceleration)
     y_axis_rotational_acceleration = rotational_acceleration[1] # Pitch
-    ic(y_axis_rotational_acceleration)
+    # ic(y_axis_rotational_acceleration)
     z_axis_rotational_acceleration = rotational_acceleration[2] # Yaw
-    ic(z_axis_rotational_acceleration)  
+    # ic(z_axis_rotational_acceleration)  
 
     # Calculate the rotation penalty.
     # This is a simple example, and you may need to adjust the weights and thresholds based on your specific needs.
@@ -48,7 +47,7 @@ def rotation_penalty(linear_acceleration, rotation_threshold=0.1):
     else:
         rotation_penalty = 0.0  # No penalty for significant linear motion
 
-    ic(rotation_penalty)
+    # ic(rotation_penalty)
     return rotation_penalty
 
 class TestModel(unittest.TestCase):
