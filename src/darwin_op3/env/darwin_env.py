@@ -33,14 +33,14 @@ class DarwinEnv(MujocoEnv, utils.EzPickle):
         self,         
         frame_skip: int = 5,
         default_camera_config: Dict[str, Union[float, int]] = DEFAULT_CAMERA_CONFIG,
+        fw_vel_rew_weight: float = 1, #2.5, #1.5,
         distance_reward_weight: float = 0, #1.25,
-        forward_reward_weight: float = 2.5, #1.5,
         ctrl_cost_weight: float = 0, #5e-2,
         turn_cost_weight: float = 1.25, #5e-2,
         orientation_cost_weight: float = 1, #5e-2,
         rotation_threshold: float = 2,
         rotation_weight: float = 0,
-        healthy_z_range: Tuple[float, float] = (0.260, 0.310),
+        healthy_z_range: Tuple[float, float] = (0.265, 0.330),
         reset_noise_scale: float = 1e-2,
         **kwargs):
 
@@ -48,8 +48,8 @@ class DarwinEnv(MujocoEnv, utils.EzPickle):
             self, 
             frame_skip,
             default_camera_config,
+            fw_vel_rew_weight,
             distance_reward_weight,
-            forward_reward_weight,
             ctrl_cost_weight,
             turn_cost_weight,
             orientation_cost_weight,
@@ -59,8 +59,8 @@ class DarwinEnv(MujocoEnv, utils.EzPickle):
             reset_noise_scale,
             **kwargs
         )
+        self._fw_vel_rew_weight: float = fw_vel_rew_weight
         self._distance_reward_weight: float = distance_reward_weight
-        self._forward_reward_weight: float = forward_reward_weight
         self._ctrl_cost_weight: float = ctrl_cost_weight
         self._turn_cost_weight: float = turn_cost_weight
         self._orientation_cost_weight: float = orientation_cost_weight
@@ -153,10 +153,7 @@ class DarwinEnv(MujocoEnv, utils.EzPickle):
 
     # determine the reward depending on observation or other properties of the simulation
     def step(self, normalized_action):
-
-
         xy_position_before = mass_center(self.model, self.data)
-        
         # Normalize action to its range
         # action = np.zeros(self.action_space.shape[0])
         # for i, joint_range in enumerate(self.joint_ranges.values()):
@@ -167,8 +164,8 @@ class DarwinEnv(MujocoEnv, utils.EzPickle):
         # action = normalized_action * np.pi 
         self.do_simulation(normalized_action * self._motor_limit, self.frame_skip)
         xy_position_after = mass_center(self.model, self.data)
-
         self.velocity = (xy_position_after - xy_position_before) / self.dt
+        # print(f"Velocity: {self.velocity}")
 
         observation = self._get_obs()
         reward, reward_info = self._get_rew()
@@ -212,8 +209,11 @@ class DarwinEnv(MujocoEnv, utils.EzPickle):
         distance2 = np.linalg.norm(foot_mass_center - self.data.site('torso').xpos[0:2], ord=2)
         return distance2 * self._zmp_weight
 
-    def forward_reward(self):
-        return self._forward_reward_weight * self.velocity[0]
+    def fw_vel_reward(self):
+        if self.velocity[0] > 0:
+            return self._fw_vel_rew_weight * self.velocity[0]
+        else:
+            return 0
 
     def distance_traveled(self):
         distance_traveled = self.data.qpos[0]
@@ -268,15 +268,15 @@ class DarwinEnv(MujocoEnv, utils.EzPickle):
         # return self._orientation_cost_weight * (orientation_x + orientation_y + orientation_z)
 
     def _get_rew(self):
-        forward_reward = self.forward_reward()
+        fw_vel_reward = self.fw_vel_reward()
         distance_traveled = self.distance_traveled()
         # weight for rotation penalty must increases proportionally to the distance traveled
         rotation_penalty = self._rotation_weight * abs(distance_traveled) * self.rotation_penalty() # self._rotation_weight * 
-        reward = forward_reward + distance_traveled - rotation_penalty
+        reward = fw_vel_reward - rotation_penalty + 0.0625
         # reward = 1
 
         reward_info = {
-            "forward_reward": forward_reward,
+            "forward_reward": fw_vel_reward,
             "distance_traveled": distance_traveled,
             "rotation_penalty": rotation_penalty,
         }
