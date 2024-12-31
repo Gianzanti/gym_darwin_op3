@@ -63,7 +63,7 @@
     <joint damping="1.084" armature="0.045" frictionloss="0.03"/>
     <site group="5" type="sphere"/>
     <!-- <position kp="21.1" ctrlrange="-3.141592 3.141592" forcerange="-4 4"/> -->
-    <motor gear="5" ctrllimited="true" ctrlrange="-3 3" />
+    <motor gear="3" ctrllimited="true" ctrlrange="-4 4" />
     <default class="collision">
       <geom group="3"/>
       <default class="foot">

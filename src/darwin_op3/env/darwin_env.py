@@ -71,7 +71,7 @@ class DarwinEnv(MujocoEnv, utils.EzPickle):
 
         self.velocity = np.zeros(2)
         # self.x_pos = 0
-        self._motor_limit = 3
+        self._motor_limit = 4
         # self.already_touch_ground = False
 
         xml_path = os.path.join(os.path.dirname(__file__), "..", "model", "scene.xml")
