@@ -39,7 +39,7 @@ class DarwinEnv(MujocoEnv, utils.EzPickle):
         turn_cost_weight: float = 1.25, #5e-2,
         orientation_cost_weight: float = 1, #5e-2,
         rotation_threshold: float = 2,
-        rotation_weight: float = 1e-1,
+        rotation_weight: float = 0,
         healthy_z_range: Tuple[float, float] = (0.260, 0.310),
         reset_noise_scale: float = 1e-2,
         **kwargs):
@@ -181,7 +181,6 @@ class DarwinEnv(MujocoEnv, utils.EzPickle):
             "x_velocity": self.velocity[0],
             "y_velocity": self.velocity[1],
             "distance_from_origin": np.linalg.norm(self.data.qpos[0:2], ord=2),
-            "dt": self.dt,
             **reward_info,
         }
 
@@ -217,12 +216,7 @@ class DarwinEnv(MujocoEnv, utils.EzPickle):
         return self._forward_reward_weight * self.velocity[0]
 
     def distance_traveled(self):
-        # last_position = self.x_pos
-        # distance_traveled = self._distance_reward_weight * (last_position - self.data.qpos[0])
         distance_traveled = self.data.qpos[0]
-        # self.x_pos = self.data.qpos[0]
-        # distance_traveled = np.linalg.norm(self.data.qpos[0:2], ord=2)
-        # print(f"Distance traveled: {distance_traveled}")
         return distance_traveled
 
     def cost_y_axis_angular_velocity(self):
@@ -277,7 +271,7 @@ class DarwinEnv(MujocoEnv, utils.EzPickle):
         forward_reward = self.forward_reward()
         distance_traveled = self.distance_traveled()
         # weight for rotation penalty must increases proportionally to the distance traveled
-        rotation_penalty = self._rotation_weight * distance_traveled * self.rotation_penalty() # self._rotation_weight * 
+        rotation_penalty = self._rotation_weight * abs(distance_traveled) * self.rotation_penalty() # self._rotation_weight * 
         reward = forward_reward + distance_traveled - rotation_penalty
         # reward = 1
 
@@ -340,13 +334,15 @@ class DarwinEnv(MujocoEnv, utils.EzPickle):
         # self.calculate_velocity_from_imu()
 
         return {
-            "x_position": self.data.qpos[0],
-            "y_position": self.data.qpos[1],
-            "z_position": self.data.qpos[2],
-            "orientation": self.data.qpos[3],
+            "x_position": 0,
+            "y_position": 0,
+            "z_position": 0,
+            "orientation": 0,
             "x_velocity": 0,
             "y_velocity": 0,
-            "distance_from_origin": np.linalg.norm(self.data.qpos[0:2], ord=2),
-            "dt": self.dt,
+            "distance_from_origin": 0,
+            "forward_reward": 0,
+            "distance_traveled": 0,
+            "rotation_penalty": 0,
         }        
     

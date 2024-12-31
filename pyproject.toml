@@ -1,6 +1,6 @@
 [project]
 name = "darwin-op3"
-version = "0.1.61"
+version = "0.1.62"
 description = "Darwin OP3 Gym MuJoCo Environment"
 readme = "README.md"
 authors = [{ name = "Fabio Gianzanti", email = "pardal@hotmail.com" }]
@@ -12,4 +12,7 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [dependency-groups]
-dev = ["imageio>=2.36.1", "mujoco>=3.2.6"]
+dev = ["imageio>=2.36.1", "mujoco>=3.2.6", "stable-baselines3"]
+
+[tool.uv.sources]
+stable-baselines3 = { git = "https://github.com/DLR-RM/stable-baselines3" }
