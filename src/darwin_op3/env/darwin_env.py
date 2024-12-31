@@ -39,7 +39,7 @@ class DarwinEnv(MujocoEnv, utils.EzPickle):
         turn_cost_weight: float = 1.25, #5e-2,
         orientation_cost_weight: float = 1, #5e-2,
         rotation_threshold: float = 2,
-        rotation_weight: float = 0,
+        rotation_weight: float = 1,
         healthy_z_range: Tuple[float, float] = (0.265, 0.330),
         reset_noise_scale: float = 1e-2,
         **kwargs):
@@ -272,7 +272,7 @@ class DarwinEnv(MujocoEnv, utils.EzPickle):
         distance_traveled = self.distance_traveled()
         # weight for rotation penalty must increases proportionally to the distance traveled
         rotation_penalty = self._rotation_weight * abs(distance_traveled) * self.rotation_penalty() # self._rotation_weight * 
-        reward = fw_vel_reward - rotation_penalty + 2
+        reward = fw_vel_reward - rotation_penalty + 0.5
         # reward = 1
 
         reward_info = {
