@@ -271,7 +271,8 @@ class DarwinEnv(MujocoEnv, utils.EzPickle):
         fw_vel_reward = self.fw_vel_reward()
         distance_traveled = self.distance_traveled()
         # weight for rotation penalty must increases proportionally to the distance traveled
-        rotation_penalty = self._rotation_weight * abs(distance_traveled) * self.rotation_penalty() # self._rotation_weight * 
+        # rotation_penalty = self._rotation_weight * abs(distance_traveled) * self.rotation_penalty() # self._rotation_weight * 
+        rotation_penalty = 0
         reward = fw_vel_reward - rotation_penalty + 0.5
         # reward = 1
 
