@@ -33,7 +33,7 @@ class DarwinEnv(MujocoEnv, utils.EzPickle):
         self,         
         frame_skip: int = 5,
         default_camera_config: Dict[str, Union[float, int]] = DEFAULT_CAMERA_CONFIG,
-        fw_vel_rew_weight: float = 1, #2.5, #1.5,
+        fw_vel_rew_weight: float = 2.5, #2.5, #1.5,
         distance_reward_weight: float = 0, #1.25,
         ctrl_cost_weight: float = 0, #5e-2,
         turn_cost_weight: float = 1.25, #5e-2,
