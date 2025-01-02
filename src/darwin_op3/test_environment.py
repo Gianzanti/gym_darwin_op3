@@ -89,7 +89,7 @@ class TestRobotisEnv(unittest.TestCase):
             print(f"Reward: {reward}")
             # print(f"Terminated: {terminated}")
             # print(f"Truncated: {truncated}")
-            # print(f"Info: {info}")
+            print(f"Info: {info}")
             episode_over = counter > 100
             counter += 1
 

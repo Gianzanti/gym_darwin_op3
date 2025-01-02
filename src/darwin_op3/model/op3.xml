@@ -87,7 +87,7 @@
       <geom mesh="body2c" class="collision"/>
       <geom mesh="body3c" class="collision"/>
       <geom mesh="body4c" class="collision"/>
-      <!-- <site name="torso"/> -->
+      <site name="torso"/>
       <body name="head_pan_link" pos="-0.001 0 0.1365">
         <!-- <inertial pos="0.00233 0 0.00823" quat="0.663575 0.663575 0.244272 -0.244272" mass="0.01176"
           diaginertia="4.23401e-06 3.60599e-06 1.65e-06"/>
@@ -102,7 +102,7 @@
           <geom mesh="h2c" class="collision"/>
           <geom mesh="h21c" class="collision"/>
           <geom mesh="h22c" class="collision"/>
-          <site name="head"/>
+          <!-- <site name="head"/> -->
           <!-- <camera name="egocentric" pos="0.01425 -0.019 0.04975" fovy="43.3" mode="fixed"
             euler="0.0 -1.570796 -1.570796"/> -->
         </body>
@@ -247,8 +247,8 @@
   </contact>
 
   <sensor>
-    <accelerometer name="accel" site="head"/>
-    <gyro name="gyro" site="head"/>
+    <accelerometer name="accel" site="torso"/>
+    <gyro name="gyro" site="torso"/>
   </sensor>
 
   <actuator>
@@ -271,12 +271,12 @@
     <position name="r_ank_pitch_act" joint="r_ank_pitch"/>
     <position name="r_ank_roll_act" joint="r_ank_roll"/> -->
     
-    <motor name="l_sho_pitch_act_motor" joint="l_sho_pitch"/>
+    <!-- <motor name="l_sho_pitch_act_motor" joint="l_sho_pitch"/>
     <motor name="l_sho_roll_act_motor" joint="l_sho_roll"/>
     <motor name="l_el_act_motor" joint="l_el"/>
     <motor name="r_sho_pitch_act_motor" joint="r_sho_pitch"/>
     <motor name="r_sho_roll_act_motor" joint="r_sho_roll"/>
-    <motor name="r_el_act_motor" joint="r_el"/>
+    <motor name="r_el_act_motor" joint="r_el"/> -->
     <motor name="l_hip_yaw_act_motor" joint="l_hip_yaw"/>
     <motor name="l_hip_roll_act_motor" joint="l_hip_roll"/>
     <motor name="l_hip_pitch_act_motor" joint="l_hip_pitch"/>

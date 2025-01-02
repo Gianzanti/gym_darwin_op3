@@ -35,7 +35,7 @@ class DarwinEnv(MujocoEnv, utils.EzPickle):
         default_camera_config: Dict[str, Union[float, int]] = DEFAULT_CAMERA_CONFIG,
         fw_vel_rew_weight: float = 2.5, #2.5, #1.5,
         distance_reward_weight: float = 0, #1.25,
-        ctrl_cost_weight: float = 5e-2,
+        ctrl_cost_weight: float = 0, #5e-2,
         turn_cost_weight: float = 1.25, #5e-2,
         orientation_cost_weight: float = 1, #5e-2,
         rotation_threshold: float = 2,
@@ -272,7 +272,8 @@ class DarwinEnv(MujocoEnv, utils.EzPickle):
         distance_traveled = self.distance_traveled()
         # weight for rotation penalty must increases proportionally to the distance traveled
         # rotation_penalty = self._rotation_weight * abs(distance_traveled) * self.rotation_penalty() # self._rotation_weight * 
-        control_cost = self.control_cost()
+        # control_cost = self.control_cost()
+        control_cost = 0
         rotation_penalty = 0
         reward = fw_vel_reward - rotation_penalty + 0.5 + control_cost
         # reward = 1
