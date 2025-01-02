@@ -282,13 +282,13 @@
     <motor name="l_hip_pitch_act_motor" joint="l_hip_pitch"/>
     <motor name="l_knee_act_motor" joint="l_knee"/>
     <motor name="l_ank_pitch_act_motor" joint="l_ank_pitch"/>
-    <motor name="l_ank_roll_act_motor" joint="l_ank_roll"/>
+    <!-- <motor name="l_ank_roll_act_motor" joint="l_ank_roll"/> -->
     <motor name="r_hip_yaw_act_motor" joint="r_hip_yaw"/>
     <motor name="r_hip_roll_act_motor" joint="r_hip_roll"/>
     <motor name="r_hip_pitch_act_motor" joint="r_hip_pitch"/>
     <motor name="r_knee_act_motor" joint="r_knee"/>
     <motor name="r_ank_pitch_act_motor" joint="r_ank_pitch"/>
-    <motor name="r_ank_roll_act_motor" joint="r_ank_roll"/>
+    <!-- <motor name="r_ank_roll_act_motor" joint="r_ank_roll"/> -->
 
   </actuator>
 

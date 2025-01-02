@@ -210,10 +210,7 @@ class DarwinEnv(MujocoEnv, utils.EzPickle):
         return distance2 * self._zmp_weight
 
     def fw_vel_reward(self):
-        if self.velocity[0] > 0:
-            return self._fw_vel_rew_weight * self.velocity[0]
-        else:
-            return 0
+        return self._fw_vel_rew_weight * self.velocity[0]
 
     def distance_traveled(self):
         distance_traveled = self.data.qpos[0]
