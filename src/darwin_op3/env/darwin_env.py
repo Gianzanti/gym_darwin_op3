@@ -33,6 +33,7 @@ class DarwinEnv(MujocoEnv, utils.EzPickle):
         self,         
         frame_skip: int = 5,
         default_camera_config: Dict[str, Union[float, int]] = DEFAULT_CAMERA_CONFIG,
+        keep_alive_reward: float = 0.5,
         fw_vel_rew_weight: float = 2.5, #2.5, #1.5,
         distance_reward_weight: float = 0, #1.25,
         ctrl_cost_weight: float = 0, #5e-2,
@@ -48,6 +49,7 @@ class DarwinEnv(MujocoEnv, utils.EzPickle):
             self, 
             frame_skip,
             default_camera_config,
+            keep_alive_reward,
             fw_vel_rew_weight,
             distance_reward_weight,
             ctrl_cost_weight,
@@ -59,6 +61,7 @@ class DarwinEnv(MujocoEnv, utils.EzPickle):
             reset_noise_scale,
             **kwargs
         )
+        self._keep_alive_reward: float = keep_alive_reward
         self._fw_vel_rew_weight: float = fw_vel_rew_weight
         self._distance_reward_weight: float = distance_reward_weight
         self._ctrl_cost_weight: float = ctrl_cost_weight
@@ -272,7 +275,7 @@ class DarwinEnv(MujocoEnv, utils.EzPickle):
         # control_cost = self.control_cost()
         control_cost = 0
         rotation_penalty = 0
-        reward = fw_vel_reward - rotation_penalty + 0.5 + control_cost
+        reward = fw_vel_reward - rotation_penalty + self._keep_alive_reward + control_cost
         # reward = 1
 
         reward_info = {
