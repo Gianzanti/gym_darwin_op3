@@ -35,6 +35,8 @@ class DarwinEnv(MujocoEnv, utils.EzPickle):
         default_camera_config: Dict[str, Union[float, int]] = DEFAULT_CAMERA_CONFIG,
         keep_alive_reward: float = 0.5,
         fw_vel_rew_weight: float = 2.5, #2.5, #1.5,
+        max_distance: float = 10.0,
+        max_distance_reward: float = 1000.0,
         distance_reward_weight: float = 0, #1.25,
         ctrl_cost_weight: float = 0, #5e-2,
         turn_cost_weight: float = 1.25, #5e-2,
@@ -51,6 +53,8 @@ class DarwinEnv(MujocoEnv, utils.EzPickle):
             default_camera_config,
             keep_alive_reward,
             fw_vel_rew_weight,
+            max_distance,
+            max_distance_reward,
             distance_reward_weight,
             ctrl_cost_weight,
             turn_cost_weight,
@@ -63,6 +67,8 @@ class DarwinEnv(MujocoEnv, utils.EzPickle):
         )
         self._keep_alive_reward: float = keep_alive_reward
         self._fw_vel_rew_weight: float = fw_vel_rew_weight
+        self._max_distance: float = max_distance
+        self._max_distance_reward: float = max_distance_reward
         self._distance_reward_weight: float = distance_reward_weight
         self._ctrl_cost_weight: float = ctrl_cost_weight
         self._turn_cost_weight: float = turn_cost_weight
@@ -172,7 +178,7 @@ class DarwinEnv(MujocoEnv, utils.EzPickle):
 
         observation = self._get_obs()
         reward, reward_info = self._get_rew()
-        terminated = (not self.is_healthy)
+        terminated = (not self.is_healthy) or (self.distance_traveled() > self._max_distance)
         info = {
             "x_position": self.data.qpos[0],
             "y_position": self.data.qpos[1],
@@ -270,6 +276,15 @@ class DarwinEnv(MujocoEnv, utils.EzPickle):
     def _get_rew(self):
         fw_vel_reward = self.fw_vel_reward()
         distance_traveled = self.distance_traveled()
+        if distance_traveled > self._max_distance:
+            return self._max_distance_reward, {            
+                "forward_reward": 0,
+                "distance_traveled": distance_traveled,
+                "rotation_penalty": 0,
+                "control_cost": 0
+            }
+
+
         # weight for rotation penalty must increases proportionally to the distance traveled
         # rotation_penalty = self._rotation_weight * abs(distance_traveled) * self.rotation_penalty() # self._rotation_weight * 
         # control_cost = self.control_cost()
