@@ -1,9 +1,8 @@
 repos:
--   repo: local
+  - repo: local
     hooks:
-    -   id: update-pyproject-version
-        name: Update pyproject.toml version
-        entry: python3 update_version.py
+      - id: increment-version
+        name: Increment version in pyproject.toml
+        entry: python3 scripts/increment_version.py
         language: system
-        files: ^pyproject\.toml$  # Matches only pyproject.toml
-        pass_filenames: false  # Script doesn't need the filename
+        stages: [commit-msg]
