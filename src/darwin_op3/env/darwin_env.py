@@ -178,7 +178,7 @@ class DarwinEnv(MujocoEnv, utils.EzPickle):
 
         observation = self._get_obs()
         reward, reward_info = self._get_rew()
-        terminated =  not (self.is_healthy or not self.reached_max_distance)
+        terminated =  self.finished_episode
         info = {
             "x_position": self.data.qpos[0],
             "y_position": self.data.qpos[1],
@@ -203,7 +203,11 @@ class DarwinEnv(MujocoEnv, utils.EzPickle):
 
     @property
     def reached_max_distance(self) -> bool:
-        return self.distance_traveled() > self._max_distance
+        return self.data.qpos[0] > self._max_distance
+    
+    @property
+    def finished_episode(self) -> bool:
+        return not self.is_healthy or self.reached_max_distance
 
     def control_cost(self):
         return -(self._ctrl_cost_weight * np.sum(np.square(self.data.ctrl)))
