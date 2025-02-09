@@ -194,7 +194,6 @@ class DarwinEnv(MujocoEnv, utils.EzPickle):
             self.render()
         # truncation=False as the time limit is handled by the `TimeLimit` wrapper added during `make`
         return observation, reward, terminated, False, info
-        # return observation, reward, False, False, info
 
     @property
     def is_healthy(self) -> bool:

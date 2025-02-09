@@ -1,0 +1,9 @@
+repos:
+-   repo: local
+    hooks:
+    -   id: update-pyproject-version
+        name: Update pyproject.toml version
+        entry: python3 update_version.py
+        language: system
+        files: ^pyproject\.toml$  # Matches only pyproject.toml
+        pass_filenames: false  # Script doesn't need the filename
