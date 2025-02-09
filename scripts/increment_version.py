@@ -1,3 +1,5 @@
+import subprocess
+
 import semver
 import toml
 
@@ -30,6 +32,9 @@ if __name__ == "__main__":
 
         print(f"Version incremented to {new_version}")
 
+        # Stage the modified pyproject.toml file
+        subprocess.run(["git", "add", PYPROJECT_PATH], check=True)
+        print(f"Staged {PYPROJECT_PATH} for commit.")
 
     except FileNotFoundError:
         print("Error: pyproject.toml not found.")

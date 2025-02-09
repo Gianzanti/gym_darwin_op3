@@ -5,7 +5,7 @@ repos:
         name: Increment version in pyproject.toml
         entry: python3 scripts/increment_version.py
         language: system
-        files: ^pyproject\.toml$
         pass_filenames: false
-        stages: [commit-msg]
+        always_run: true
+        stages: [pre-commit]
 
