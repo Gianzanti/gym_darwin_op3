@@ -10,7 +10,7 @@ if env_id is None:
     # Register this module as a gym environment. Once registered, the id is usable in gym.make().
     register(
         id=env,
-        entry_point="gym_env.envs:DarwinEnv",
+        entry_point="gym_env.envs:DarwinOp3Env",
         nondeterministic=True,
     )
     print(f"Registered environment {env}")

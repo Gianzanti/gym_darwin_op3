@@ -1,1 +1,1 @@
-from gym_env.envs.darwin_op3 import DarwinEnv
+from gym_env.envs.darwin_op3 import DarwinOp3Env

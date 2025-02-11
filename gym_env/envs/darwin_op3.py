@@ -19,7 +19,7 @@ def mass_center(model, data):
     com = np.sum(mass * xpos, axis=0) / np.sum(mass)
     return com[0:2].copy()
 
-class DarwinEnv(MujocoEnv, EzPickle):
+class DarwinOp3Env(MujocoEnv, EzPickle):
     metadata = {
         "render_modes": [
             "human",
