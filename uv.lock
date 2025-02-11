@@ -98,33 +98,6 @@ wheels = [
 ]
 
 [[package]]
-name = "darwin-op3"
-version = "0.2.2"
-source = { editable = "." }
-dependencies = [
-    { name = "gymnasium" },
-    { name = "imageio" },
-    { name = "mujoco" },
-    { name = "stable-baselines3" },
-]
-
-[package.dev-dependencies]
-dev = [
-    { name = "stable-baselines3" },
-]
-
-[package.metadata]
-requires-dist = [
-    { name = "gymnasium", specifier = ">=1.0.0" },
-    { name = "imageio", specifier = ">=2.37.0" },
-    { name = "mujoco", specifier = ">=3.2.7" },
-    { name = "stable-baselines3", git = "https://github.com/DLR-RM/stable-baselines3" },
-]
-
-[package.metadata.requires-dev]
-dev = [{ name = "stable-baselines3", git = "https://github.com/DLR-RM/stable-baselines3" }]
-
-[[package]]
 name = "etils"
 version = "1.11.0"
 source = { registry = "https://pypi.org/simple" }
@@ -224,6 +197,33 @@ wheels = [
     { url = "https://files.pythonhosted.org/packages/64/65/3c18a715c8a57a4e1de96311b6ad6c77c3b90535fc92c4a5e26b2e18f87d/glfw-2.8.0-py2.py27.py3.py30.py31.py32.py33.py34.py35.py36.py37.py38.p39.p310.p311.p312.p313-none-win32.whl", hash = "sha256:13a75d8d3e8d4bb24595f2354a392ccf7c54ddd20dacb88e1188b760f2a7714b", size = 552596 },
     { url = "https://files.pythonhosted.org/packages/9d/3d/29791f39363b613a0b62b9ca7a2449ef55fe51096797ae3bc90c1bb8d143/glfw-2.8.0-py2.py27.py3.py30.py31.py32.py33.py34.py35.py36.py37.py38.p39.p310.p311.p312.p313-none-win_amd64.whl", hash = "sha256:1416f10d2c2748c39910e9d9e6a10a5473743c5a745518061e4051be4c5caaa1", size = 559382 },
 ]
+
+[[package]]
+name = "gym-env"
+version = "0.2.6"
+source = { editable = "." }
+dependencies = [
+    { name = "gymnasium" },
+    { name = "imageio" },
+    { name = "mujoco" },
+    { name = "stable-baselines3" },
+]
+
+[package.dev-dependencies]
+dev = [
+    { name = "stable-baselines3" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "gymnasium", specifier = ">=1.0.0" },
+    { name = "imageio", specifier = ">=2.37.0" },
+    { name = "mujoco", specifier = ">=3.2.7" },
+    { name = "stable-baselines3", git = "https://github.com/DLR-RM/stable-baselines3" },
+]
+
+[package.metadata.requires-dev]
+dev = [{ name = "stable-baselines3", git = "https://github.com/DLR-RM/stable-baselines3" }]
 
 [[package]]
 name = "gymnasium"

@@ -3,7 +3,8 @@ import unittest
 import numpy as np
 from stable_baselines3.common.base_class import BaseAlgorithm
 
-from gym_env.envs.darwin_op3 import DarwinEnv
+# from gym_env.envs.darwin_op3 import DarwinOp3Env
+from gym_env.envs.darwin_op3 import DarwinOp3Env
 
 
 def evaluate(
