@@ -16,8 +16,12 @@ DEFAULT_CAMERA_CONFIG = {
 
 def mass_center(model, data):
     mass = np.expand_dims(model.body_mass, axis=1)
+    # print(f"Mass: {mass} - Sum: {np.sum(mass)}")
     xpos = data.xipos
-    return (np.sum(mass * xpos, axis=0) / np.sum(mass))[0:2].copy()
+    # print(f"Xpos: {xpos}")
+    com = np.sum(mass * xpos, axis=0) / np.sum(mass)
+    # print(f"COM: {com}")
+    return com[0:2].copy()
 
 class DarwinEnv(MujocoEnv, utils.EzPickle):
     metadata = {
@@ -33,7 +37,7 @@ class DarwinEnv(MujocoEnv, utils.EzPickle):
         self,         
         frame_skip: int = 5,
         default_camera_config: Dict[str, Union[float, int]] = DEFAULT_CAMERA_CONFIG,
-        keep_alive_reward: float = 0.5,
+        keep_alive_reward: float = 0.0,
         fw_vel_rew_weight: float = 2.5, #2.5, #1.5,
         max_distance: float = 10.0,
         max_distance_reward: float = 1000.0,
@@ -65,6 +69,7 @@ class DarwinEnv(MujocoEnv, utils.EzPickle):
             reset_noise_scale,
             **kwargs
         )
+
         self._keep_alive_reward: float = keep_alive_reward
         self._fw_vel_rew_weight: float = fw_vel_rew_weight
         self._max_distance: float = max_distance
@@ -79,10 +84,7 @@ class DarwinEnv(MujocoEnv, utils.EzPickle):
         self._reset_noise_scale: float = reset_noise_scale
 
         self.velocity = np.zeros(2)
-        # self.x_pos = 0
         self._motor_limit = 4
-        # self.already_touch_ground = False
-
         xml_path = os.path.join(os.path.dirname(__file__), "..", "model", "scene.xml")
 
         MujocoEnv.__init__(
@@ -174,7 +176,7 @@ class DarwinEnv(MujocoEnv, utils.EzPickle):
         self.do_simulation(normalized_action * self._motor_limit, self.frame_skip)
         xy_position_after = mass_center(self.model, self.data)
         self.velocity = (xy_position_after - xy_position_before) / self.dt
-        # print(f"Velocity: {self.velocity}")
+        print(f"Velocity: {self.velocity}")
 
         observation = self._get_obs()
         reward, reward_info = self._get_rew()
