@@ -181,7 +181,7 @@ class DarwinOp3Env(MujocoEnv, EzPickle):
         xy_position_after = mass_center(self.model, self.data)
         
         velocity = (xy_position_after - xy_position_before) / self.dt
-        print(f"Velocity: {velocity}")
+        # print(f"Velocity: {velocity}")
 
         observation = self._get_obs()
         reward, reward_info = self._get_rew(velocity[0])
