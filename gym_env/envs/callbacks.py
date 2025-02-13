@@ -35,14 +35,14 @@ class TensorboardCallback(BaseCallback):
         # self.distance_traveled = (0,0)
         # self.rotation_penalty = (0,0)
         # self.control_cost = (0,0)
-        print("001 - Tensorboard Callback Initialized")
+        # print("001 - Tensorboard Callback Initialized")
         self.episode_positions = []
 
     def _on_training_start(self) -> None:
         """
         This method is called before the first rollout starts.
         """
-        print("002 - Training Started")
+        # print("002 - Training Started")
 
     def _on_rollout_start(self) -> None:
         """
@@ -50,7 +50,7 @@ class TensorboardCallback(BaseCallback):
         using the current policy.
         This event is triggered before collecting new samples.
         """
-        print("003 - Rollout Started")
+        # print("003 - Rollout Started")
 
     def _on_step(self) -> bool:
         """
@@ -61,8 +61,8 @@ class TensorboardCallback(BaseCallback):
 
         :return: If the callback returns False, training is aborted early.
         """
-        if self.num_timesteps % 1000 == 0:
-            print("004 - Step: ", self.num_timesteps)
+        # if self.num_timesteps % 1000 == 0:
+        #     print("004 - Step: ", self.num_timesteps)
         info = self.locals['infos'][0]
         # self.logger.record('info/pos_z', info['z_position'])
 
@@ -108,7 +108,7 @@ class TensorboardCallback(BaseCallback):
         """
         This event is triggered before updating the policy.
         """
-        print("005 - Rollout Ended")
+        # print("005 - Rollout Ended")
         if self.episode_positions:
             self.logger.record('mean_episode/pos_z', sum(self.episode_positions) / len(self.episode_positions))
             self.logger.record('max_episode/pos_z', max(self.episode_positions))
@@ -119,5 +119,5 @@ class TensorboardCallback(BaseCallback):
         """
         This event is triggered before exiting the `learn()` method.
         """
-        print("006 - Training Ended")
+        # print("006 - Training Ended")
 
