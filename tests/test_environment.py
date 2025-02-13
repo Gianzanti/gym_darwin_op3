@@ -4,6 +4,7 @@ import numpy as np
 from stable_baselines3.common.base_class import BaseAlgorithm
 
 # from gym_env.envs.darwin_op3 import DarwinOp3Env
+from gym_env.envs.callbacks import TensorboardCallback
 from gym_env.envs.darwin_op3 import DarwinOp3Env
 
 
@@ -72,11 +73,11 @@ class DarwinOp3_TestEnv(unittest.TestCase):
         while not episode_over:
             observation, reward, terminated, truncated, info = env.step(action)
             print(f"Observation: {observation}")
-            print(f"Reward: {reward}")
-            print(f"Terminated: {terminated}")
-            print(f"Truncated: {truncated}")
-            print(f"Info: {info}")
-            episode_over = counter > 100
+            # print(f"Reward: {reward}")
+            # print(f"Terminated: {terminated}")
+            # print(f"Truncated: {truncated}")
+            # print(f"Info: {info}")
+            episode_over = counter > 3000 or terminated
             counter += 1
 
         env.close()
@@ -186,3 +187,19 @@ class DarwinOp3_TestEnv(unittest.TestCase):
         env.close()
 
         print("Environment check successful!")
+
+
+    def test_callback(self):
+        import gymnasium as gym
+        from stable_baselines3 import PPO
+        from stable_baselines3.ppo.policies import MlpPolicy
+
+        # env = gym.make('DarwinOp3-v1', render_mode="human", width=1920, height=1080)
+        env = gym.make('DarwinOp3-v1')
+        model = PPO(MlpPolicy, env, verbose=1, device="cpu", n_steps=2048, batch_size=64, n_epochs=10)
+        # mean_reward_before_train = evaluate(model, num_episodes=100)
+
+        model.learn(total_timesteps=10000, callback=TensorboardCallback())
+        # mean_reward_after_train = evaluate(model, num_episodes=100)
+
+        # assert mean_reward_after_train > mean_reward_before_train, "Callback failed to improve the mean reward"

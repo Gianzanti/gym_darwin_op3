@@ -63,7 +63,9 @@
     <joint damping="1.084" armature="0.045" frictionloss="0.03"/>
     <site group="5" type="sphere"/>
     <!-- <position kp="21.1" ctrlrange="-3.141592 3.141592" forcerange="-4 4"/> -->
-    <motor gear="3" ctrllimited="true" ctrlrange="-4 4" />
+    <!-- <motor gear="3" ctrllimited="true" ctrlrange="-4 4" /> -->
+    <motor gear="3" ctrllimited="true" ctrlrange="-4.1 4.1" forcerange="-4.1 4.1" />
+  
     <default class="collision">
       <geom group="3"/>
       <default class="foot">
@@ -93,15 +95,15 @@
           diaginertia="4.23401e-06 3.60599e-06 1.65e-06"/>
         <joint name="head_pan" axis="0 0 1" /> -->
         <geom mesh="h1" class="visual"/>
-        <geom mesh="h1c" class="collision"/>
+        <!-- <geom mesh="h1c" class="collision"/> -->
         <body name="head_tilt_link" pos="0.01 0.019 0.0285">
           <!-- <inertial pos="0.0023 -0.01863 0.0277" quat="0.997312 0.00973825 0.0726131 -0.00102702" mass="0.13631"
             diaginertia="0.000107452 8.72266e-05 4.39413e-05"/> -->
           <!-- <joint name="head_tilt" axis="0 -1 0"/> -->
           <geom mesh="h2" class="visual"/>
-          <geom mesh="h2c" class="collision"/>
+          <!-- <geom mesh="h2c" class="collision"/>
           <geom mesh="h21c" class="collision"/>
-          <geom mesh="h22c" class="collision"/>
+          <geom mesh="h22c" class="collision"/> -->
           <!-- <site name="head"/> -->
           <!-- <camera name="egocentric" pos="0.01425 -0.019 0.04975" fovy="43.3" mode="fixed"
             euler="0.0 -1.570796 -1.570796"/> -->
@@ -110,19 +112,22 @@
       <body name="l_sho_pitch_link" pos="-0.001 0.06 0.111">
         <inertial pos="0 0.00823 -0.00233" quat="0.244272 0.663575 0.244272 0.663575" mass="0.01176"
           diaginertia="4.23401e-06 3.60599e-06 1.65e-06"/>
-        <joint name="l_sho_pitch" axis="0 1 0" limited="true" range="-3.14 3.14"/>
+        <!-- <joint name="l_sho_pitch" axis="0 1 0" limited="true" range="-3.14 3.14"/> -->
+        <joint name="l_sho_pitch" axis="0 1 0" limited="true" range="-2.2 2.2"/>
         <geom mesh="la1" class="visual"/>
         <geom mesh="la1c" class="collision"/>
         <body name="l_sho_roll_link" pos="0.019 0.0285 -0.01">
           <inertial pos="-0.01844 0.04514 0.00028" quat="0.501853 0.50038 -0.498173 0.499588" mass="0.17758"
             diaginertia="0.000234742 0.00022804 3.04183e-05"/>
-          <joint name="l_sho_roll" axis="-1 0 0" limited="true" range="-0.60 1.90"/> <!-- ref="-1.3"/> -->
+          <!-- <joint name="l_sho_roll" axis="-1 0 0" limited="true" range="-0.60 1.90"/> -->
+          <joint name="l_sho_roll" axis="-1 0 0" limited="true" range="-0.80 1.60"/> <!-- ref="-1.3"/> -->
           <geom mesh="la2" class="visual"/>
           <geom mesh="la2c" class="collision"/>
           <body name="l_el_link" pos="0 0.0904 -0.0001">
             <inertial pos="-0.019 0.07033 0.0038" quat="0.483289 0.51617 -0.51617 0.483289" mass="0.04127"
               diaginertia="6.8785e-05 6.196e-05 1.2065e-05"/>
-            <joint name="l_el" axis="1 0 0" limited="true" range="-3.00 0.50"/> <!-- ref="0.3"/> -->
+            <!-- <joint name="l_el" axis="1 0 0" limited="true" range="-3.00 0.50"/> -->
+            <joint name="l_el" axis="1 0 0" limited="true" range="-1.40 0.20"/>
             <geom mesh="la3" class="visual"/>
             <geom mesh="la3c" class="collision"/>
           </body>
@@ -131,19 +136,22 @@
       <body name="r_sho_pitch_link" pos="-0.001 -0.06 0.111">
         <inertial pos="0 -0.00823 -0.00233" quat="-0.244272 0.663575 -0.244272 0.663575" mass="0.01176"
           diaginertia="4.23401e-06 3.60599e-06 1.65e-06"/>
-        <joint name="r_sho_pitch" axis="0 -1 0" limited="true" range="-3.14 3.14"/>
+        <!-- <joint name="r_sho_pitch" axis="0 -1 0" limited="true" range="-3.14 3.14"/> -->
+        <joint name="r_sho_pitch" axis="0 -1 0" limited="true" range="-2.20 2.20"/>
         <geom mesh="ra1" class="visual"/>
         <geom mesh="ra1c" class="collision"/>
         <body name="r_sho_roll_link" pos="0.019 -0.0285 -0.01">
           <inertial pos="-0.01844 -0.04514 0.00028" quat="0.50038 0.501853 -0.499588 0.498173" mass="0.17758"
             diaginertia="0.000234742 0.00022804 3.04183e-05"/>
-          <joint name="r_sho_roll" axis="-1 0 0" limited="true" range="-1.90 0.60"/> <!-- ref="1.3"/> -->
+          <!-- <joint name="r_sho_roll" axis="-1 0 0" limited="true" range="-1.90 0.60"/> -->
+          <joint name="r_sho_roll" axis="-1 0 0" limited="true" range="-1.60 0.80"/>
           <geom mesh="ra2" class="visual"/>
           <geom mesh="ra2c" class="collision"/>
           <body name="r_el_link" pos="0 -0.0904 -0.0001">
             <inertial pos="-0.019 -0.07033 0.0038" quat="0.51617 0.483289 -0.483289 0.51617" mass="0.04127"
               diaginertia="6.8785e-05 6.196e-05 1.2065e-05"/>
-            <joint name="r_el" axis="1 0 0" limited="true" range="-0.50 3.00"/> <!-- ref="-0.3"/> -->
+            <!-- <joint name="r_el" axis="1 0 0" limited="true" range="-0.50 3.00"/> -->
+            <joint name="r_el" axis="1 0 0" limited="true" range="-0.20 1.40"/>
             <geom mesh="ra3" class="visual"/>
             <geom mesh="ra3c" class="collision"/>
           </body>
@@ -159,30 +167,35 @@
         <body name="l_hip_roll_link" pos="-0.024 0 -0.0285">
           <inertial pos="0.00388 0.00028 -0.01214" quat="0.502657 0.490852 0.498494 0.507842" mass="0.17886"
             diaginertia="0.000125243 0.000108598 4.65693e-05"/>
-          <joint name="l_hip_roll" axis="-1 0 0" limited="true" range="-0.3 0.3"/>
+          <!-- <joint name="l_hip_roll" axis="-1 0 0" limited="true" range="-0.3 0.3"/> -->
+          <joint name="l_hip_roll" axis="-1 0 0" limited="true" range="-0.4 -0.1"/>
           <geom mesh="ll2" class="visual"/>
           <geom mesh="ll2c" class="collision"/>
           <body name="l_hip_pitch_link" pos="0.0241 0.019 0" >
             <inertial pos="0.00059 -0.01901 -0.08408" quat="0.999682 0.0246915 0.00447825 -0.002482" mass="0.11543"
               diaginertia="0.000104996 9.63044e-05 2.47492e-05"/>
-            <joint name="l_hip_pitch" axis="0 1 0" limited="true" range="-2.00 1.0"/>
+            <!-- <joint name="l_hip_pitch" axis="0 1 0" limited="true" range="-2.00 1.0"/> -->
+            <joint name="l_hip_pitch" axis="0 1 0" limited="true" range="-1.60 0.5"/>
             <geom mesh="ll3" class="visual"/>
             <geom mesh="ll3c" class="collision"/>
             <body name="l_knee_link" pos="0 0 -0.11015">
               <inertial pos="0 -0.02151 -0.055" mass="0.04015" diaginertia="3.715e-05 2.751e-05 1.511e-05"/>
-              <joint name="l_knee" axis="0 1 0" limited="true" range="-0.08 3.00" />
+              <!-- <joint name="l_knee" axis="0 1 0" limited="true" range="-0.08 3.00" /> -->
+              <joint name="l_knee" axis="0 1 0" limited="true" range="-0.20 2.20" />
               <geom mesh="ll4" class="visual"/>
               <geom mesh="ll4c" class="collision"/>
               <body name="l_ank_pitch_link" pos="0 0 -0.11">
                 <inertial pos="-0.02022 -0.01872 0.01214" quat="0.490852 0.502657 0.507842 0.498494" mass="0.17886"
                   diaginertia="0.000125243 0.000108598 4.65693e-05"/>
-                <joint name="l_ank_pitch" axis="0 -1 0" limited="true" range="-0.52 0.52"/>
+                <!-- <joint name="l_ank_pitch" axis="0 -1 0" limited="true" range="-0.52 0.52"/> -->
+                <joint name="l_ank_pitch" axis="0 -1 0" limited="true" range="-0.40 1.80"/>
                 <geom mesh="ll5" class="visual"/>
                 <geom mesh="ll5c" class="collision"/>
                 <body name="l_ank_roll_link" pos="-0.0241 -0.019 0">
                   <inertial pos="0.02373 0.01037 -0.0276" quat="0.0078515 0.707601 0.0113965 0.706477" mass="0.06934"
                     diaginertia="0.000115818 7.87135e-05 4.03389e-05"/>
-                  <joint name="l_ank_roll" axis="1 0 0" limited="true" range="-0.52 0.52"/>
+                  <!-- <joint name="l_ank_roll" axis="1 0 0" limited="true" range="-0.52 0.52"/> -->
+                  <joint name="l_ank_roll" axis="1 0 0" limited="true" range="-0.40 0.40"/>
                   <geom mesh="ll6" class="visual"/>
                   <!-- <geom mesh="ll6c" class="collision" /> -->
                   <geom class="foot" pos="0.024 0.013 -0.0265" size="0.0635 0.028 0.004"/>
@@ -203,30 +216,35 @@
         <body name="r_hip_roll_link" pos="-0.024 0 -0.0285">
           <inertial pos="0.00388 -0.00028 -0.01214" quat="0.507842 0.498494 0.490852 0.502657" mass="0.17886"
             diaginertia="0.000125243 0.000108598 4.65693e-05"/>
-          <joint name="r_hip_roll" axis="-1 0 0" limited="true" range="-0.3 0.3"/>
+          <!-- <joint name="r_hip_roll" axis="-1 0 0" limited="true" range="-0.3 0.3"/> -->
+          <joint name="r_hip_roll" axis="-1 0 0" limited="true" range="0.10 0.40"/>
           <geom mesh="rl2" class="visual"/>
           <geom mesh="rl2c" class="collision"/>
           <body name="r_hip_pitch_link" pos="0.0241 -0.019 0">
             <inertial pos="0.00059 0.01901 -0.08408" quat="0.999682 -0.0246915 0.00447825 0.002482" mass="0.11543"
               diaginertia="0.000104996 9.63044e-05 2.47492e-05"/>
-            <joint name="r_hip_pitch" axis="0 -1 0" limited="true" range="-1.0 2.00"/>
+            <!-- <joint name="r_hip_pitch" axis="0 -1 0" limited="true" range="-1.0 2.00"/> -->
+            <joint name="r_hip_pitch" axis="0 -1 0" limited="true" range="-0.50 1.60"/>
             <geom mesh="rl3" class="visual"/>
             <geom mesh="rl3c" class="collision"/>
             <body name="r_knee_link" pos="0 0 -0.11015">
               <inertial pos="0 0.02151 -0.055" mass="0.04015" diaginertia="3.715e-05 2.751e-05 1.511e-05"/>
-              <joint name="r_knee" axis="0 -1 0" limited="true" range="-3.00 0.08" /> 
+              <!-- <joint name="r_knee" axis="0 -1 0" limited="true" range="-3.00 0.08" />  -->
+              <joint name="r_knee" axis="0 -1 0" limited="true" range="-2.20 0.20" /> 
               <geom mesh="rl4" class="visual"/>
               <geom mesh="rl4c" class="collision"/>
               <body name="r_ank_pitch_link" pos="0 0 -0.11">
                 <inertial pos="-0.02022 0.01872 0.01214" quat="0.498494 0.507842 0.502657 0.490852" mass="0.17886"
                   diaginertia="0.000125243 0.000108598 4.65693e-05"/>
-                <joint name="r_ank_pitch" axis="0 1 0" limited="true" range="-0.52 0.52"/>
+                <!-- <joint name="r_ank_pitch" axis="0 1 0" limited="true" range="-0.52 0.52"/> -->
+                <joint name="r_ank_pitch" axis="0 1 0" limited="true" range="-1.80 0.40"/>
                 <geom mesh="rl5" class="visual"/>
                 <geom mesh="rl5c" class="collision"/>
                 <body name="r_ank_roll_link" pos="-0.0241 0.019 0">
                   <inertial pos="0.02373 -0.01037 -0.0276" quat="-0.0078515 0.707601 -0.0113965 0.706477" mass="0.06934"
                     diaginertia="0.000115818 7.87135e-05 4.03389e-05"/>
-                  <joint name="r_ank_roll" axis="1 0 0" limited="true" range="-0.52 0.52"/>
+                  <!-- <joint name="r_ank_roll" axis="1 0 0" limited="true" range="-0.52 0.52"/> -->
+                  <joint name="r_ank_roll" axis="1 0 0" limited="true" range="-0.40 0.40"/>
                   <geom mesh="rl6" class="visual"/>
                   <!-- <geom mesh="rl6c" class="collision" /> -->
                   <geom class="foot" pos="0.024 -0.013 -0.0265" size="0.0635 0.028 0.004"/>
@@ -247,8 +265,9 @@
   </contact>
 
   <sensor>
-    <accelerometer name="accel" site="torso"/>
     <gyro name="gyro" site="torso"/>
+    <accelerometer name="accel" site="torso"/>
+    <magnetometer name="mag" site="torso"/>
   </sensor>
 
   <actuator>
@@ -271,30 +290,24 @@
     <position name="r_ank_pitch_act" joint="r_ank_pitch"/>
     <position name="r_ank_roll_act" joint="r_ank_roll"/> -->
     
-    <motor gear = "0" name="l_sho_pitch_act_motor" joint="l_sho_pitch"/>
-    <motor gear = "0" name="l_sho_roll_act_motor" joint="l_sho_roll"/>
-    <motor gear = "0" name="l_el_act_motor" joint="l_el"/>
-    <motor gear = "0" name="r_sho_pitch_act_motor" joint="r_sho_pitch"/>
-    <motor gear = "0" name="r_sho_roll_act_motor" joint="r_sho_roll"/>
-    <motor gear = "0" name="r_el_act_motor" joint="r_el"/>
+    <motor name="l_sho_pitch_act_motor" joint="l_sho_pitch"/>
+    <motor name="l_sho_roll_act_motor" joint="l_sho_roll"/>
+    <motor name="l_el_act_motor" joint="l_el"/>
+    <motor name="r_sho_pitch_act_motor" joint="r_sho_pitch"/>
+    <motor name="r_sho_roll_act_motor" joint="r_sho_roll"/>
+    <motor name="r_el_act_motor" joint="r_el"/>
     <motor name="l_hip_yaw_act_motor" joint="l_hip_yaw"/>
     <motor name="l_hip_roll_act_motor" joint="l_hip_roll"/>
     <motor name="l_hip_pitch_act_motor" joint="l_hip_pitch"/>
     <motor name="l_knee_act_motor" joint="l_knee"/>
     <motor name="l_ank_pitch_act_motor" joint="l_ank_pitch"/>
-    <motor gear = "0" name="l_ank_roll_act_motor" joint="l_ank_roll"/>
+    <motor name="l_ank_roll_act_motor" joint="l_ank_roll"/>
     <motor name="r_hip_yaw_act_motor" joint="r_hip_yaw"/>
     <motor name="r_hip_roll_act_motor" joint="r_hip_roll"/>
     <motor name="r_hip_pitch_act_motor" joint="r_hip_pitch"/>
     <motor name="r_knee_act_motor" joint="r_knee"/>
     <motor name="r_ank_pitch_act_motor" joint="r_ank_pitch"/>
-    <motor gear = "0" name="r_ank_roll_act_motor" joint="r_ank_roll"/>
+    <motor name="r_ank_roll_act_motor" joint="r_ank_roll"/>
 
   </actuator>
-
-  <!-- <keyframe>
-      <key time="0" qpos='0.00 0.00 0.279106 0.99993 0.00 0.00 0.00 0.00 0 0 0.00 0 0 0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.00' />
-      <key time="1" qpos='0.00 0.00 0.279106 0.99993 0.00 0.00 0.00 0.00 1.30 -0.30 0.00 -1.30 0.30 0.00 0.00 -0.25 0.50 0.25 0.00 0.00 0.00 0.25 -0.50 -0.25 0.00' />
-  </keyframe> -->
-
 </mujoco>
