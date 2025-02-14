@@ -1,3 +1,4 @@
+import numpy as np
 from stable_baselines3.common.callbacks import BaseCallback
 
 
@@ -36,6 +37,9 @@ class TensorboardCallback(BaseCallback):
         # self.rotation_penalty = (0,0)
         # self.control_cost = (0,0)
         # print("001 - Tensorboard Callback Initialized")
+        # print("001 - Tensorboard Callback Initialized")
+        # print(f"Num Envs: {self.training_env.num_envs}")
+        # print(self.__dict__)
         self.episode_positions = []
 
     def _on_training_start(self) -> None:
@@ -43,6 +47,9 @@ class TensorboardCallback(BaseCallback):
         This method is called before the first rollout starts.
         """
         # print("002 - Training Started")
+        # print(f"Num Envs: {self.training_env.num_envs}")
+        self.episode_positions = [[]] * self.training_env.num_envs
+
 
     def _on_rollout_start(self) -> None:
         """
@@ -61,12 +68,13 @@ class TensorboardCallback(BaseCallback):
 
         :return: If the callback returns False, training is aborted early.
         """
-        # if self.num_timesteps % 1000 == 0:
-        #     print("004 - Step: ", self.num_timesteps)
-        info = self.locals['infos'][0]
-        # self.logger.record('info/pos_z', info['z_position'])
+        
+        for env_idx in range(self.training_env.num_envs):
+            # if self.num_timesteps % 1000 == 0:
+            #     print(f"004 - Calls: {self.n_calls} - Step: {self.num_timesteps} at env: {env_idx}")
 
-        self.episode_positions.append(info['z_position'])
+            info = self.locals['infos'][env_idx]
+            self.episode_positions[env_idx].append(info['z_position'])
 
         # calculate the mean of the values
         # self.x_pos = ((self.x_pos[0] + info['x_position']) / 2, max(self.x_pos[1], info['x_position']))
@@ -109,11 +117,13 @@ class TensorboardCallback(BaseCallback):
         This event is triggered before updating the policy.
         """
         # print("005 - Rollout Ended")
-        if self.episode_positions:
-            self.logger.record('mean_episode/pos_z', sum(self.episode_positions) / len(self.episode_positions))
-            self.logger.record('max_episode/pos_z', max(self.episode_positions))
-            self.logger.record('min_episode/pos_z', min(self.episode_positions))
-            self.episode_positions = []
+        for env_idx in range(self.training_env.num_envs):
+            if self.episode_positions[env_idx]:
+                z_values = np.array(self.episode_positions[env_idx]) # Convert to NumPy array for calculations
+                self.logger.record(f'mean_episode/pos_z_{env_idx}', np.mean(z_values))
+                self.logger.record(f'max_episode/pos_z_{env_idx}', np.max(z_values))
+                self.logger.record(f'min_episode/pos_z_{env_idx}', np.min(z_values))
+                self.episode_positions[env_idx] = []
 
     def _on_training_end(self) -> None:
         """

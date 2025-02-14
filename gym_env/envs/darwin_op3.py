@@ -91,8 +91,8 @@ class DarwinOp3Env(MujocoEnv, EzPickle):
         self.action_space = Box(low=-1, high=1, shape=self.action_space.shape, dtype=np.float32)
 
         obs_size = self.data.qpos[2:].size + self.data.qvel[2:].size
-        obs_size += self.data.sensordata.size - 3
-        obs_size += 4
+        obs_size += self.data.sensordata.size
+        # obs_size += 4
         # obs_size += self.data.cinert[1:].size
         # obs_size += self.data.cvel[1:].size
 
@@ -109,9 +109,9 @@ class DarwinOp3Env(MujocoEnv, EzPickle):
         velocity = self.data.qvel[2:].flatten()
         gyro = self.data.sensordata[0:3].flatten()
         acc = self.data.sensordata[3:6].flatten()
-        # mag = self.data.sensordata[6:9].flatten()
+        mag = self.data.sensordata[6:9].flatten()
         # imu = self.data.sensordata.flatten()
-        self._gravity_quat = self._madgwick.updateMARG(self._gravity_quat, gyr=np.array(gyro), acc=np.array(acc), mag=np.array(self.data.sensordata[6:9])).flatten()   # Using MARG
+        # self._gravity_quat = self._madgwick.updateMARG(self._gravity_quat, gyr=np.array(gyro), acc=np.array(acc), mag=np.array(self.data.sensordata[6:9])).flatten()   # Using MARG
         # self._gravity_quat = Madgwick(gyr=np.array([gyro]), acc=np.array([acc]), mag=np.array([self.data.sensordata[6:9]]), q0=self._gravity_quat).Q.flatten()   # Using MARG
         # com_inertia = self.data.cinert[1:].flatten()
         # com_velocity = self.data.cvel[1:].flatten()
@@ -124,7 +124,8 @@ class DarwinOp3Env(MujocoEnv, EzPickle):
                 velocity,
                 gyro,
                 acc,
-                self._gravity_quat
+                mag
+                # self._gravity_quat
                 # com_inertia,
                 # com_velocity,
             )

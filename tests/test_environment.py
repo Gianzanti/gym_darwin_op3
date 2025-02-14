@@ -3,7 +3,6 @@ import unittest
 import numpy as np
 from stable_baselines3.common.base_class import BaseAlgorithm
 
-# from gym_env.envs.darwin_op3 import DarwinOp3Env
 from gym_env.envs.callbacks import TensorboardCallback
 from gym_env.envs.darwin_op3 import DarwinOp3Env
 
@@ -198,6 +197,22 @@ class DarwinOp3_TestEnv(unittest.TestCase):
         env = gym.make('DarwinOp3-v1')
         model = PPO(MlpPolicy, env, verbose=1, device="cpu", n_steps=2048, batch_size=64, n_epochs=10)
         # mean_reward_before_train = evaluate(model, num_episodes=100)
+
+        model.learn(total_timesteps=10000, callback=TensorboardCallback())
+        # mean_reward_after_train = evaluate(model, num_episodes=100)
+
+        # assert mean_reward_after_train > mean_reward_before_train, "Callback failed to improve the mean reward"
+
+    def test_multi_env(self):
+        # import gymnasium as gym
+        from stable_baselines3 import PPO
+        from stable_baselines3.common.env_util import make_vec_env
+
+        # from stable_baselines3.common.vec_env import DummyVecEnv, SubprocVecEnv
+        from stable_baselines3.ppo.policies import MlpPolicy
+
+        env = make_vec_env('DarwinOp3-v1', n_envs=4)
+        model = PPO(MlpPolicy, env, verbose=1, device="cpu", n_steps=2048, batch_size=64, n_epochs=10)
 
         model.learn(total_timesteps=10000, callback=TensorboardCallback())
         # mean_reward_after_train = evaluate(model, num_episodes=100)
