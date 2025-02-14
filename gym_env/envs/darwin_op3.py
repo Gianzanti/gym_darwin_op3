@@ -2,7 +2,6 @@ import os
 from typing import Dict, Tuple, Union
 
 import numpy as np
-from ahrs.filters import Madgwick
 from gymnasium.envs.mujoco import MujocoEnv
 from gymnasium.spaces import Box
 from gymnasium.utils import EzPickle
@@ -66,9 +65,9 @@ class DarwinOp3Env(MujocoEnv, EzPickle):
         self._healthy_z_range: Tuple[float, float] = healthy_z_range
         self._reset_noise_scale: float = reset_noise_scale
         
-        self._motor_max_torque = 2
-        self._madgwick = Madgwick()
-        self._gravity_quat = np.array([0.7071, 0.0, 0.7071, 0.0])
+        self._motor_max_torque = 3
+        # self._madgwick = Madgwick()
+        # self._gravity_quat = np.array([0.7071, 0.0, 0.7071, 0.0])
 
         MujocoEnv.__init__(
             self,

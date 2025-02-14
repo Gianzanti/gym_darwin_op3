@@ -1,10 +1,10 @@
 [project]
 name = "gym-env"
-version = "0.2.11"
+version = "0.2.12"
 description = "Darwin OP3 Gym MuJoCo Environment"
 readme = "README.md"
 requires-python = ">=3.10"
-dependencies = [ "gymnasium>=1.0.0", "imageio>=2.37.0", "mujoco>=3.2.7", "stable-baselines3", "ahrs",]
+dependencies = [ "gymnasium>=1.0.0", "imageio>=2.37.0", "mujoco>=3.2.7", "stable-baselines3",]
 [[project.authors]]
 name = "Fabio Gianzanti"
 email = "pardal@hotmail.com"
