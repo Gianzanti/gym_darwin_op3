@@ -48,7 +48,8 @@ class TensorboardCallback(BaseCallback):
         """
         # print("002 - Training Started")
         # print(f"Num Envs: {self.training_env.num_envs}")
-        self.episode_positions = [[]] * self.training_env.num_envs
+        # self.episode_positions = [[]] * self.training_env.num_envs
+        self.episode_positions = []
 
 
     def _on_rollout_start(self) -> None:
@@ -68,48 +69,10 @@ class TensorboardCallback(BaseCallback):
 
         :return: If the callback returns False, training is aborted early.
         """
-        
         for env_idx in range(self.training_env.num_envs):
-            # if self.num_timesteps % 1000 == 0:
-            #     print(f"004 - Calls: {self.n_calls} - Step: {self.num_timesteps} at env: {env_idx}")
-
             info = self.locals['infos'][env_idx]
-            self.episode_positions[env_idx].append(info['z_position'])
+            self.episode_positions.append(info['z_position'])
 
-        # calculate the mean of the values
-        # self.x_pos = ((self.x_pos[0] + info['x_position']) / 2, max(self.x_pos[1], info['x_position']))
-        # self.y_pos = ((self.y_pos[0] + info['y_position']) / 2, max(self.y_pos[1], info['y_position']))
-        # self.z_pos = ((self.z_pos[0] + info['z_position']) / 2, max(self.z_pos[1], info['z_position']))
-        # self.x_vel = ((self.x_vel[0] + info['x_velocity']) / 2, max(self.x_vel[1], info['x_velocity']))
-        # self.y_vel = ((self.y_vel[0] + info['y_velocity']) / 2, max(self.y_vel[1], info['y_velocity']))
-        # self.forward_reward = ((self.forward_reward[0] + info['forward_reward']) / 2, max(self.forward_reward[1], info['forward_reward']))
-        # self.distance_traveled = ((self.distance_traveled[0] + info['distance_traveled']) / 2, max(self.distance_traveled[1], info['distance_traveled']))
-        # self.rotation_penalty = ((self.rotation_penalty[0] + info['rotation_penalty']) / 2, max(self.rotation_penalty[1], info['rotation_penalty']))
-        # self.control_cost = ((self.control_cost[0] + info['control_cost']) / 2, max(self.control_cost[1], info['control_cost']))
-
-
-        # log the mean values
-        # self.logger.record('mean_info/pos_x', self.x_pos[0])
-        # self.logger.record('mean_info/pos_y', self.y_pos[0])
-        # self.logger.record('mean_info/pos_z', self.z_pos[0])
-        # self.logger.record('mean_info/vel_x', self.x_vel[0])
-        # self.logger.record('mean_info/vel_y', self.y_vel[0])
-        # self.logger.record('mean_reward/forward_reward', self.forward_reward[0])
-        # self.logger.record('mean_reward/distance_traveled', self.distance_traveled[0])
-        # self.logger.record('mean_reward/rotation_penalty', self.rotation_penalty[0])
-        # self.logger.record('mean_reward/control_cost', self.control_cost[0])
-
-        # log the max values
-        # self.logger.record('max_info/pos_x', self.x_pos[1])
-        # self.logger.record('max_info/pos_y', self.y_pos[1])
-        # self.logger.record('max_info/pos_z', self.z_pos[1])
-        # self.logger.record('max_info/vel_x', self.x_vel[1])
-        # self.logger.record('max_info/vel_y', self.y_vel[1])
-        # self.logger.record('max_reward/forward_reward', self.forward_reward[1])
-        # self.logger.record('max_reward/distance_traveled', self.distance_traveled[1])
-        # self.logger.record('max_reward/rotation_penalty', self.rotation_penalty[1])
-        # self.logger.record('max_reward/control_cost', self.control_cost[1])
-        
         return True
 
     def _on_rollout_end(self) -> None:
@@ -117,13 +80,12 @@ class TensorboardCallback(BaseCallback):
         This event is triggered before updating the policy.
         """
         # print("005 - Rollout Ended")
-        for env_idx in range(self.training_env.num_envs):
-            if self.episode_positions[env_idx]:
-                z_values = np.array(self.episode_positions[env_idx]) # Convert to NumPy array for calculations
-                self.logger.record(f'mean_episode/pos_z_{env_idx}', np.mean(z_values))
-                self.logger.record(f'max_episode/pos_z_{env_idx}', np.max(z_values))
-                self.logger.record(f'min_episode/pos_z_{env_idx}', np.min(z_values))
-                self.episode_positions[env_idx] = []
+        if self.episode_positions:
+            z_values = np.array(self.episode_positions) # Convert to NumPy array for calculations
+            self.logger.record('mean_episode/pos_z', np.mean(z_values))
+            self.logger.record('max_episode/pos_z', np.max(z_values))
+            self.logger.record('min_episode/pos_z', np.min(z_values))
+            self.episode_positions = []
 
     def _on_training_end(self) -> None:
         """
