@@ -166,7 +166,7 @@ class DarwinOp3Env(MujocoEnv, EzPickle):
 
     def _get_rew(self, x_velocity):
         health_reward = self._keep_alive_reward * self.is_healthy
-        forward_reward = self._fw_vel_rew_weight * x_velocity
+        forward_reward = self._fw_vel_rew_weight * pow(x_velocity,2) * self.data.qpos[0]
         # control_cost = self._ctrl_cost_weight * np.sum(np.square(self.data.ctrl))
         # reward = health_reward + forward_reward - control_cost
         reward = health_reward + forward_reward
