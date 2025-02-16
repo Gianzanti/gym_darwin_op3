@@ -33,11 +33,12 @@ class DarwinOp3Env(MujocoEnv, EzPickle):
         frame_skip: int = 5,
         default_camera_config: Dict[str, Union[float, int]] = DEFAULT_CAMERA_CONFIG,
         # ctrl_cost_weight: float = 0.1, #5e-2,
-        reach_target_reward: float = 10000.0,
-        target_distance: float = 5.0,
-        forward_velocity_weight: float = 1.25,
-        keep_alive_reward: float = 0.0,
+        reach_target_reward: float = 0.0, # 10000.0,
+        target_distance: float = 0.0, # 5.0
+        forward_velocity_weight: float = 0.0, #2.50,
+        keep_alive_reward: float = 0.0, #0.1
         healthy_z_range: Tuple[float, float] = (0.265, 0.310),
+        motor_max_torque: float = 0, # 3.0,
         reset_noise_scale: float = 1e-2,
         **kwargs):
 
@@ -51,6 +52,7 @@ class DarwinOp3Env(MujocoEnv, EzPickle):
             forward_velocity_weight,
             keep_alive_reward,
             healthy_z_range,
+            motor_max_torque,
             reset_noise_scale,
             **kwargs
         )
@@ -63,9 +65,9 @@ class DarwinOp3Env(MujocoEnv, EzPickle):
         self._fw_vel_rew_weight: float = forward_velocity_weight
         self._keep_alive_reward: float = keep_alive_reward
         self._healthy_z_range: Tuple[float, float] = healthy_z_range
+        self._motor_max_torque = motor_max_torque
         self._reset_noise_scale: float = reset_noise_scale
         
-        self._motor_max_torque = 3
         # self._madgwick = Madgwick()
         # self._gravity_quat = np.array([0.7071, 0.0, 0.7071, 0.0])
 
@@ -208,8 +210,8 @@ class DarwinOp3Env(MujocoEnv, EzPickle):
         reward, reward_info = self._get_rew(velocity[0])
 
         info = {
-            "x_position": self.data.qpos[0],
-            "y_position": self.data.qpos[1],
+            "x_position": xy_position_after[0],
+            "y_position": xy_position_after[1],
             "z_position": self.data.qpos[2],
             "orientation": self.data.qpos[3],
             "x_velocity": velocity[0],
