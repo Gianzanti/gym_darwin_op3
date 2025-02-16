@@ -92,7 +92,6 @@ class DarwinOp3_TestEnv(unittest.TestCase):
         model = PPO(MlpPolicy, env, verbose=1)
         mean_reward_before_train = evaluate(model, num_episodes=100)
 
-
     def test_actions(self):
         import gymnasium as gym
         env = gym.make('DarwinOp3-v0', render_mode="human", width=1024, height=768)
@@ -186,7 +185,6 @@ class DarwinOp3_TestEnv(unittest.TestCase):
         env.close()
 
         print("Environment check successful!")
-
 
     def test_callback(self):
         import gymnasium as gym

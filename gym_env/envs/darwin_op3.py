@@ -32,11 +32,11 @@ class DarwinOp3Env(MujocoEnv, EzPickle):
         self,         
         frame_skip: int = 5,
         default_camera_config: Dict[str, Union[float, int]] = DEFAULT_CAMERA_CONFIG,
-        # reach_target_reward: float = 10000.0,
-        # target_distance: float = 5.0,
         # ctrl_cost_weight: float = 0.1, #5e-2,
-        # forward_velocity_weight: float = 1.25, #2.5, #1.5,
-        keep_alive_reward: float = 1.0,
+        reach_target_reward: float = 10000.0,
+        target_distance: float = 5.0,
+        forward_velocity_weight: float = 1.25,
+        keep_alive_reward: float = 0.0,
         healthy_z_range: Tuple[float, float] = (0.265, 0.310),
         reset_noise_scale: float = 1e-2,
         **kwargs):
@@ -45,10 +45,10 @@ class DarwinOp3Env(MujocoEnv, EzPickle):
             self, 
             frame_skip,
             default_camera_config,
-            # reach_target_reward,
-            # target_distance,
             # ctrl_cost_weight,
-            # forward_velocity_weight,
+            reach_target_reward,
+            target_distance,
+            forward_velocity_weight,
             keep_alive_reward,
             healthy_z_range,
             reset_noise_scale,
@@ -57,10 +57,10 @@ class DarwinOp3Env(MujocoEnv, EzPickle):
 
         xml_path = os.path.join(os.path.dirname(__file__), "..", "..", "mjcf", "scene.xml")
 
-        # self._reach_target_reward: float = reach_target_reward
-        # self._target_distance: float = target_distance
         # self._ctrl_cost_weight: float = ctrl_cost_weight
-        # self._fw_vel_rew_weight: float = forward_velocity_weight
+        self._reach_target_reward: float = reach_target_reward
+        self._target_distance: float = target_distance
+        self._fw_vel_rew_weight: float = forward_velocity_weight
         self._keep_alive_reward: float = keep_alive_reward
         self._healthy_z_range: Tuple[float, float] = healthy_z_range
         self._reset_noise_scale: float = reset_noise_scale
@@ -164,20 +164,20 @@ class DarwinOp3Env(MujocoEnv, EzPickle):
 
     def _get_rew(self, x_velocity):
         health_reward = self._keep_alive_reward * self.is_healthy
-        # forward_reward = self._fw_vel_rew_weight * x_velocity
+        forward_reward = self._fw_vel_rew_weight * x_velocity
         # control_cost = self._ctrl_cost_weight * np.sum(np.square(self.data.ctrl))
         # reward = health_reward + forward_reward - control_cost
         reward = health_reward
 
-        # if self.data.qpos[0] > self._target_distance:
-        #     health_reward = 0
-        #     forward_reward = 0
-        #     control_cost = 0
-        #     reward = self._reach_target_reward
+        if self.data.qpos[0] > self._target_distance:
+            health_reward = 0
+            forward_reward = 0
+            # control_cost = 0
+            reward = self._reach_target_reward
 
         reward_info = {
             "health_reward": health_reward,
-            # "forward_reward": forward_reward,
+            "forward_reward": forward_reward,
             "distance_traveled": self.data.qpos[0],
             # "control_cost": control_cost,
         }
@@ -185,8 +185,8 @@ class DarwinOp3Env(MujocoEnv, EzPickle):
         return reward, reward_info
 
     def termination(self):
-        # if self.data.qpos[0] > self._target_distance:
-        #     return True
+        if self.data.qpos[0] > self._target_distance:
+            return True
 
         if not self.is_healthy:
             return True
