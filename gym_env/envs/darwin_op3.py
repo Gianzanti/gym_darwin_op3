@@ -167,7 +167,7 @@ class DarwinOp3Env(MujocoEnv, EzPickle):
         forward_reward = self._fw_vel_rew_weight * x_velocity
         # control_cost = self._ctrl_cost_weight * np.sum(np.square(self.data.ctrl))
         # reward = health_reward + forward_reward - control_cost
-        reward = health_reward
+        reward = health_reward + forward_reward
 
         if self.data.qpos[0] > self._target_distance:
             health_reward = 0
