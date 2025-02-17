@@ -33,12 +33,12 @@ class DarwinOp3Env(MujocoEnv, EzPickle):
         frame_skip: int = 5,
         default_camera_config: Dict[str, Union[float, int]] = DEFAULT_CAMERA_CONFIG,
         # ctrl_cost_weight: float = 0.1, #5e-2,
-        reach_target_reward: float = 0.0, # 10000.0,
-        target_distance: float = 0.0, # 5.0
-        forward_velocity_weight: float = 0.0, #2.50,
-        keep_alive_reward: float = 0.0, #0.1
+        reach_target_reward: float = 1000.0, # 10000.0,
+        target_distance: float = 10.0, # 5.0
+        forward_velocity_weight: float = 10.0, #2.50,
+        keep_alive_reward: float = 1.0, #0.1
         healthy_z_range: Tuple[float, float] = (0.265, 0.310),
-        motor_max_torque: float = 0, # 3.0,
+        motor_max_torque: float = 3.0, # 3.0,
         reset_noise_scale: float = 1e-2,
         **kwargs):
 
@@ -189,11 +189,12 @@ class DarwinOp3Env(MujocoEnv, EzPickle):
         return reward, reward_info
 
     def termination(self):
+        if not self.is_healthy:
+            return True
+
         if self.data.qpos[0] > self._target_distance:
             return True
 
-        if not self.is_healthy:
-            return True
         return False
 
     def step(self, normalized_action):
