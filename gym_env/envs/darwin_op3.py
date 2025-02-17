@@ -164,23 +164,25 @@ class DarwinOp3Env(MujocoEnv, EzPickle):
         # print(f"Min Z: {min_z}, Max Z: {max_z}, Current Z: {self.data.qpos[2]}")
         return min_z < self.data.qpos[2] < max_z
 
-    def _get_rew(self, x_velocity):
+    def _get_rew(self, x_velocity, distance_from_origin):
         health_reward = self._keep_alive_reward * self.is_healthy
-        forward_reward = self._fw_vel_rew_weight * pow(x_velocity,2) * self.data.qpos[0]
+        forward_reward = self._fw_vel_rew_weight * x_velocity
+        distance_reward = np.linalg.norm(self.data.qpos[0:2], ord=2)
         # control_cost = self._ctrl_cost_weight * np.sum(np.square(self.data.ctrl))
         # reward = health_reward + forward_reward - control_cost
-        reward = health_reward + forward_reward
+        reward = health_reward + forward_reward + distance_reward
 
         if self.data.qpos[0] > self._target_distance:
             health_reward = 0
             forward_reward = 0
+            distance_reward = 0
             # control_cost = 0
             reward = self._reach_target_reward
 
         reward_info = {
             "health_reward": health_reward,
             "forward_reward": forward_reward,
-            "distance_traveled": self.data.qpos[0],
+            "distance_reward": distance_reward,
             # "control_cost": control_cost,
         }
 
@@ -206,6 +208,8 @@ class DarwinOp3Env(MujocoEnv, EzPickle):
         velocity = (xy_position_after - xy_position_before) / self.dt
         # print(f"Velocity: {velocity}")
 
+        distance_from_origin = np.linalg.norm(self.data.qpos[0:2], ord=2)
+
         observation = self._get_obs()
         reward, reward_info = self._get_rew(velocity[0])
 
@@ -216,7 +220,7 @@ class DarwinOp3Env(MujocoEnv, EzPickle):
             "orientation": self.data.qpos[3],
             "x_velocity": velocity[0],
             "y_velocity": velocity[1],
-            "distance_from_origin": np.linalg.norm(self.data.qpos[0:2], ord=2),
+            "distance_from_origin": distance_from_origin,
             **reward_info,
         }
 
