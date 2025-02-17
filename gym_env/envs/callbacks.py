@@ -139,9 +139,9 @@ class TensorboardCallback(BaseCallback):
             # self.logger.record('max_episode/forward_reward', np.max(forward_values))
             # self.logger.record('min_episode/forward_reward', np.min(forward_values))
 
-            distance_reward = np.array(self.episode_positions['distance_rewards'])
-            self.logger.record('mean_episode/distance_reward', np.mean(distance_reward))
-            self.logger.record('max_episode/distance_reward', np.max(distance_reward))
+            distance_rewards = np.array(self.episode_positions['distance_rewards'])
+            self.logger.record('mean_episode/distance_reward', np.mean(distance_rewards))
+            self.logger.record('max_episode/distance_reward', np.max(distance_rewards))
 
 
 
@@ -154,6 +154,7 @@ class TensorboardCallback(BaseCallback):
             "distances": [],
             "health_rewards": [],
             "forward_rewards": [],
+            "distance_rewards": [],
         }
 
     # def _on_training_end(self) -> None:
