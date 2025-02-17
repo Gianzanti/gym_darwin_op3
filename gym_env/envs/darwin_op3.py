@@ -164,7 +164,7 @@ class DarwinOp3Env(MujocoEnv, EzPickle):
         # print(f"Min Z: {min_z}, Max Z: {max_z}, Current Z: {self.data.qpos[2]}")
         return min_z < self.data.qpos[2] < max_z
 
-    def _get_rew(self, x_velocity, distance_from_origin):
+    def _get_rew(self, x_velocity):
         health_reward = self._keep_alive_reward * self.is_healthy
         forward_reward = self._fw_vel_rew_weight * x_velocity
         distance_reward = np.linalg.norm(self.data.qpos[0:2], ord=2)
