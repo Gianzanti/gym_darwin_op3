@@ -59,6 +59,8 @@ class TensorboardCallback(BaseCallback):
             "health_rewards": [],
             "forward_rewards": [],
             "distance_rewards": [],
+            "control_costs": [],
+            "side_costs": [],
         }
 
     # def _on_rollout_start(self) -> None:
@@ -89,6 +91,8 @@ class TensorboardCallback(BaseCallback):
             self.episode_positions['health_rewards'].append(info['health_reward'])
             self.episode_positions['forward_rewards'].append(info['forward_reward'])
             self.episode_positions['distance_rewards'].append(info['distance_reward'])
+            self.episode_positions['control_costs'].append(info['control_cost'])
+            self.episode_positions['side_costs'].append(info['side_cost'])
 
 
         return True
@@ -143,6 +147,15 @@ class TensorboardCallback(BaseCallback):
             self.logger.record('mean_episode/distance_reward', np.mean(distance_rewards))
             self.logger.record('max_episode/distance_reward', np.max(distance_rewards))
 
+            control_costs = np.array(self.episode_positions['control_costs'])
+            self.logger.record('mean_episode/control_cost', np.mean(control_costs))
+            self.logger.record('max_episode/control_cost', np.max(control_costs))
+
+            side_costs = np.array(self.episode_positions['side_costs'])
+            self.logger.record('mean_episode/side_cost', np.mean(side_costs))
+            self.logger.record('max_episode/side_cost', np.max(side_costs))
+
+
 
 
         self.episode_positions = {
@@ -155,6 +168,8 @@ class TensorboardCallback(BaseCallback):
             "health_rewards": [],
             "forward_rewards": [],
             "distance_rewards": [],
+            "control_costs": [],
+            "side_costs": [],
         }
 
     # def _on_training_end(self) -> None:

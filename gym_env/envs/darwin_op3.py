@@ -32,7 +32,8 @@ class DarwinOp3Env(MujocoEnv, EzPickle):
         self,         
         frame_skip: int = 5,
         default_camera_config: Dict[str, Union[float, int]] = DEFAULT_CAMERA_CONFIG,
-        # ctrl_cost_weight: float = 0.1, #5e-2,
+        side_cost_weight: float = 100.0, #5e-2,
+        ctrl_cost_weight: float = 1e-2, #5e-2,
         reach_target_reward: float = 1000.0, # 10000.0,
         target_distance: float = 10.0, # 5.0
         forward_velocity_weight: float = 10.0, #2.50,
@@ -46,7 +47,8 @@ class DarwinOp3Env(MujocoEnv, EzPickle):
             self, 
             frame_skip,
             default_camera_config,
-            # ctrl_cost_weight,
+            side_cost_weight,
+            ctrl_cost_weight,
             reach_target_reward,
             target_distance,
             forward_velocity_weight,
@@ -59,7 +61,8 @@ class DarwinOp3Env(MujocoEnv, EzPickle):
 
         xml_path = os.path.join(os.path.dirname(__file__), "..", "..", "mjcf", "scene.xml")
 
-        # self._ctrl_cost_weight: float = ctrl_cost_weight
+        self._side_cost_weight: float = side_cost_weight
+        self._ctrl_cost_weight: float = ctrl_cost_weight
         self._reach_target_reward: float = reach_target_reward
         self._target_distance: float = target_distance
         self._fw_vel_rew_weight: float = forward_velocity_weight
@@ -168,22 +171,25 @@ class DarwinOp3Env(MujocoEnv, EzPickle):
         health_reward = self._keep_alive_reward * self.is_healthy
         forward_reward = self._fw_vel_rew_weight * x_velocity
         distance_reward = np.linalg.norm(self.data.qpos[0:2], ord=2)
-        # control_cost = self._ctrl_cost_weight * np.sum(np.square(self.data.ctrl))
+        control_cost = self._ctrl_cost_weight * np.sum(np.square(self.data.ctrl))
+        side_cost = self._side_cost_weight * np.sum(np.square(self.data.qpos[1]))
         # reward = health_reward + forward_reward - control_cost
-        reward = health_reward + forward_reward + distance_reward
+        reward = health_reward + forward_reward + distance_reward - control_cost - side_cost
 
         if self.data.qpos[0] > self._target_distance:
             health_reward = 0
             forward_reward = 0
             distance_reward = 0
-            # control_cost = 0
+            control_cost = 0
+            side_cost = 0
             reward = self._reach_target_reward
 
         reward_info = {
             "health_reward": health_reward,
             "forward_reward": forward_reward,
             "distance_reward": distance_reward,
-            # "control_cost": control_cost,
+            "control_cost": control_cost,
+            "side_cost": side_cost,
         }
 
         return reward, reward_info
