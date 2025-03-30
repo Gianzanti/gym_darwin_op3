@@ -94,7 +94,7 @@ class DarwinOp3_TestEnv(unittest.TestCase):
 
     def test_actions(self):
         import gymnasium as gym
-        env = gym.make('DarwinOp3-v0', render_mode="human", width=1024, height=768)
+        env = gym.make('DarwinOp3-v1', render_mode="human", width=1024, height=768)
 
         observation, info = env.reset()
 
