@@ -70,9 +70,6 @@ class DarwinOp3Env(MujocoEnv, EzPickle):
         self._healthy_z_range: Tuple[float, float] = healthy_z_range
         self._motor_max_torque = motor_max_torque
         self._reset_noise_scale: float = reset_noise_scale
-        
-        # self._madgwick = Madgwick()
-        # self._gravity_quat = np.array([0.7071, 0.0, 0.7071, 0.0])
 
         MujocoEnv.__init__(
             self,
@@ -96,13 +93,6 @@ class DarwinOp3Env(MujocoEnv, EzPickle):
 
         obs_size = self.data.qpos[2:].size + self.data.qvel[2:].size
         obs_size += self.data.sensordata.size
-        # obs_size += 4
-        # obs_size += self.data.cinert[1:].size
-        # obs_size += self.data.cvel[1:].size
-
-
-# madgwick = Madgwick(gyr=gyro_data, acc=acc_data, q0=[0.7071, 0.0, 0.7071, 0.0])
-# madgwick = Madgwick(gyr=gyro_data, acc=acc_data, mag=mag_data)   # Using MARG
 
         self.observation_space = Box(
             low=-np.inf, high=np.inf, shape=(obs_size,), dtype=np.float64
@@ -114,13 +104,6 @@ class DarwinOp3Env(MujocoEnv, EzPickle):
         gyro = self.data.sensordata[0:3].flatten()
         acc = self.data.sensordata[3:6].flatten()
         mag = self.data.sensordata[6:9].flatten()
-        # imu = self.data.sensordata.flatten()
-        # self._gravity_quat = self._madgwick.updateMARG(self._gravity_quat, gyr=np.array(gyro), acc=np.array(acc), mag=np.array(self.data.sensordata[6:9])).flatten()   # Using MARG
-        # self._gravity_quat = Madgwick(gyr=np.array([gyro]), acc=np.array([acc]), mag=np.array([self.data.sensordata[6:9]]), q0=self._gravity_quat).Q.flatten()   # Using MARG
-        # com_inertia = self.data.cinert[1:].flatten()
-        # com_velocity = self.data.cvel[1:].flatten()
-
-        # Madgwick.updateMARG(gyr=gyro, acc=acc, mag=mag)
 
         return np.concatenate(
             (
@@ -129,23 +112,10 @@ class DarwinOp3Env(MujocoEnv, EzPickle):
                 gyro,
                 acc,
                 mag
-                # self._gravity_quat
-                # com_inertia,
-                # com_velocity,
             )
         )
 
     def reset_model(self):
-        # redefine the initial arms position
-        # self.init_qpos[8] = 1.30
-        # self.init_qpos[11] = -1.30
-        # self.init_qpos[15] = -0.45
-        # self.init_qpos[16] = 0.70
-        # self.init_qpos[17] = 0.25
-        # self.init_qpos[21] = 0.45
-        # self.init_qpos[22] = -0.70
-        # self.init_qpos[23] = -0.25
-
         noise_low = -self._reset_noise_scale
         noise_high = self._reset_noise_scale
 
@@ -164,7 +134,6 @@ class DarwinOp3Env(MujocoEnv, EzPickle):
     @property
     def is_healthy(self) -> bool:
         min_z, max_z = self._healthy_z_range
-        # print(f"Min Z: {min_z}, Max Z: {max_z}, Current Z: {self.data.qpos[2]}")
         return min_z < self.data.qpos[2] < max_z
 
     def _get_rew(self, x_velocity):
@@ -173,10 +142,9 @@ class DarwinOp3Env(MujocoEnv, EzPickle):
         distance_reward = np.linalg.norm(self.data.qpos[0:2], ord=2)
         control_cost = self._ctrl_cost_weight * np.sum(np.square(self.data.ctrl))
         side_cost = self._side_cost_weight * np.sum(np.square(self.data.qpos[1]))
-        # reward = health_reward + forward_reward - control_cost
         reward = health_reward + forward_reward + distance_reward - control_cost - side_cost
 
-        if self.data.qpos[0] > self._target_distance:
+        if self.data.qpos[0] >= self._target_distance:
             health_reward = 0
             forward_reward = 0
             distance_reward = 0
@@ -198,7 +166,7 @@ class DarwinOp3Env(MujocoEnv, EzPickle):
         if not self.is_healthy:
             return True
 
-        if self.data.qpos[0] > self._target_distance:
+        if self.data.qpos[0] >= self._target_distance:
             return True
 
         return False
@@ -213,8 +181,6 @@ class DarwinOp3Env(MujocoEnv, EzPickle):
         xy_position_after = mass_center(self.model, self.data)
         
         velocity = (xy_position_after - xy_position_before) / self.dt
-        # print(f"Velocity: {velocity}")
-
         distance_from_origin = np.linalg.norm(self.data.qpos[0:2], ord=2)
 
         observation = self._get_obs()

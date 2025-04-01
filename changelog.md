@@ -352,3 +352,7 @@
 ## v.0.1.48 - [30/12/2024]
 
 - adjusting rotation_penalty
+
+## v.0.2.23 - [01/04/2025]
+
+- updated libraries: "gymnasium>=1.1.1", "mujoco>=3.3.0", "stable-baselines3=2.6.0"

@@ -16,4 +16,3 @@ if env_id is None:
     print(f"Registered environment {env}")
 
 print(f"DarwinOp3 Env version: {version('gym-env')}")
-# print("DarwinOp3 Env version 0.2.2")
