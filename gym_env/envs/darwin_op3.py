@@ -13,11 +13,13 @@ DEFAULT_CAMERA_CONFIG = {
     "elevation": -5.0,
 }
 
+
 def mass_center(model, data):
     mass = np.expand_dims(model.body_mass, axis=1)
     xpos = data.xipos
     com = np.sum(mass * xpos, axis=0) / np.sum(mass)
     return com[0:2].copy()
+
 
 class DarwinOp3Env(MujocoEnv, EzPickle):
     metadata = {
@@ -29,22 +31,23 @@ class DarwinOp3Env(MujocoEnv, EzPickle):
     }
 
     def __init__(
-        self,         
+        self,
         frame_skip: int = 5,
         default_camera_config: Dict[str, Union[float, int]] = DEFAULT_CAMERA_CONFIG,
-        side_cost_weight: float = 100.0, #5e-2,
-        ctrl_cost_weight: float = 1e-2, #5e-2,
-        reach_target_reward: float = 1000.0, # 10000.0,
-        target_distance: float = 10.0, # 5.0
-        forward_velocity_weight: float = 10.0, #2.50,
-        keep_alive_reward: float = 1.0, #0.1
+        side_cost_weight: float = 100.0,  # 5e-2,
+        ctrl_cost_weight: float = 1e-2,  # 5e-2,
+        reach_target_reward: float = 1000.0,  # 10000.0,
+        target_distance: float = 10.0,  # 5.0
+        distance_rew_weight: float = 2.5,  # 2.50,
+        forward_velocity_weight: float = 10.0,  # 2.50,
+        keep_alive_reward: float = 1.0,  # 0.1
         healthy_z_range: Tuple[float, float] = (0.265, 0.310),
-        motor_max_torque: float = 3.0, # 3.0,
+        motor_max_torque: float = 3.0,  # 3.0,
         reset_noise_scale: float = 1e-2,
-        **kwargs):
-
+        **kwargs,
+    ):
         EzPickle.__init__(
-            self, 
+            self,
             frame_skip,
             default_camera_config,
             side_cost_weight,
@@ -56,16 +59,19 @@ class DarwinOp3Env(MujocoEnv, EzPickle):
             healthy_z_range,
             motor_max_torque,
             reset_noise_scale,
-            **kwargs
+            **kwargs,
         )
 
-        xml_path = os.path.join(os.path.dirname(__file__), "..", "..", "mjcf", "scene.xml")
+        xml_path = os.path.join(
+            os.path.dirname(__file__), "..", "..", "mjcf", "scene.xml"
+        )
 
         self._side_cost_weight: float = side_cost_weight
         self._ctrl_cost_weight: float = ctrl_cost_weight
         self._reach_target_reward: float = reach_target_reward
         self._target_distance: float = target_distance
         self._fw_vel_rew_weight: float = forward_velocity_weight
+        self._distance_rew_weight: float = distance_rew_weight
         self._keep_alive_reward: float = keep_alive_reward
         self._healthy_z_range: Tuple[float, float] = healthy_z_range
         self._motor_max_torque = motor_max_torque
@@ -77,7 +83,7 @@ class DarwinOp3Env(MujocoEnv, EzPickle):
             frame_skip,
             observation_space=None,
             default_camera_config=DEFAULT_CAMERA_CONFIG,
-            **kwargs
+            **kwargs,
         )
 
         self.metadata = {
@@ -89,7 +95,9 @@ class DarwinOp3Env(MujocoEnv, EzPickle):
             "render_fps": int(np.round(1.0 / self.dt)),
         }
 
-        self.action_space = Box(low=-1, high=1, shape=self.action_space.shape, dtype=np.float32)
+        self.action_space = Box(
+            low=-1, high=1, shape=self.action_space.shape, dtype=np.float32
+        )
 
         obs_size = self.data.qpos[2:].size + self.data.qvel[2:].size
         obs_size += self.data.sensordata.size
@@ -105,15 +113,7 @@ class DarwinOp3Env(MujocoEnv, EzPickle):
         acc = self.data.sensordata[3:6].flatten()
         mag = self.data.sensordata[6:9].flatten()
 
-        return np.concatenate(
-            (
-                position,
-                velocity,
-                gyro,
-                acc,
-                mag
-            )
-        )
+        return np.concatenate((position, velocity, gyro, acc, mag))
 
     def reset_model(self):
         noise_low = -self._reset_noise_scale
@@ -139,10 +139,12 @@ class DarwinOp3Env(MujocoEnv, EzPickle):
     def _get_rew(self, x_velocity):
         health_reward = self._keep_alive_reward * self.is_healthy
         forward_reward = self._fw_vel_rew_weight * x_velocity
-        distance_reward = np.linalg.norm(self.data.qpos[0:2], ord=2)
+        distance_reward = self._distance_rew_weight * np.linalg.norm(self.data.qpos[0:2], ord=2)
         control_cost = self._ctrl_cost_weight * np.sum(np.square(self.data.ctrl))
         side_cost = self._side_cost_weight * np.sum(np.square(self.data.qpos[1]))
-        reward = health_reward + forward_reward + distance_reward - control_cost - side_cost
+        reward = (
+            health_reward + forward_reward + distance_reward - control_cost - side_cost
+        )
 
         if self.data.qpos[0] >= self._target_distance:
             health_reward = 0
@@ -179,7 +181,7 @@ class DarwinOp3Env(MujocoEnv, EzPickle):
         action = normalized_action * self._motor_max_torque
         self.do_simulation(action, self.frame_skip)
         xy_position_after = mass_center(self.model, self.data)
-        
+
         velocity = (xy_position_after - xy_position_before) / self.dt
         distance_from_origin = np.linalg.norm(self.data.qpos[0:2], ord=2)
 
@@ -201,4 +203,3 @@ class DarwinOp3Env(MujocoEnv, EzPickle):
             self.render()
         # truncation=False as the time limit is handled by the `TimeLimit` wrapper added during `make`
         return observation, reward, self.termination(), False, info
-

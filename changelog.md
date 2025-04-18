@@ -356,3 +356,7 @@
 ## v.0.2.23 - [01/04/2025]
 
 - updated libraries: "gymnasium>=1.1.1", "mujoco>=3.3.0", "stable-baselines3=2.6.0"
+
+## v.0.2.25 - [18/04/2025]
+
+- adding distance reward height
