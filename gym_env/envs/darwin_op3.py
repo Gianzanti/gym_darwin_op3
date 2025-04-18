@@ -54,6 +54,7 @@ class DarwinOp3Env(MujocoEnv, EzPickle):
             ctrl_cost_weight,
             reach_target_reward,
             target_distance,
+            distance_rew_weight,
             forward_velocity_weight,
             keep_alive_reward,
             healthy_z_range,
