@@ -37,15 +37,12 @@ class DarwinOp3Env(MujocoEnv, EzPickle):
         pos_deviation_weight: float = 10.0,  # 5e-2,
         lateral_velocity_weight: float = 5.0,  # 5e-2,
         
-        ctrl_cost_weight: float = 1e-2,  # 5e-2,
+        ctrl_cost_weight: float = 1e-3,  # 5e-2,
         reach_target_reward: float = 100.0,  # 10000.0,
         target_distance: float = 5.0,  # 5.0
         
-        progress_reward_weight: float = 1.0,  # 0.3,
-        forward_velocity_weight: float = 2.5,  # 2.50,
-        
+        forward_velocity_weight: float = 1.0,  # 2.50,
         keep_alive_reward: float = 1.0,  # 0.1
-        
         healthy_z_range: Tuple[float, float] = (0.265, 0.310),
         motor_max_torque: float = 3.0,  # 3.0,
         reset_noise_scale: float = 1e-2,
@@ -60,7 +57,6 @@ class DarwinOp3Env(MujocoEnv, EzPickle):
             ctrl_cost_weight,
             reach_target_reward,
             target_distance,
-            progress_reward_weight,
             forward_velocity_weight,
             keep_alive_reward,
             healthy_z_range,
@@ -78,7 +74,6 @@ class DarwinOp3Env(MujocoEnv, EzPickle):
         self._ctrl_cost_weight: float = ctrl_cost_weight
         self._reach_target_reward: float = reach_target_reward
         self._target_distance: float = target_distance
-        self._progress_reward_weight: float = progress_reward_weight
         self._fw_vel_rew_weight: float = forward_velocity_weight
         self._keep_alive_reward: float = keep_alive_reward
         self._healthy_z_range: Tuple[float, float] = healthy_z_range
@@ -148,18 +143,12 @@ class DarwinOp3Env(MujocoEnv, EzPickle):
         [x_velocity, y_velocity] = velocity
         health_reward = self._keep_alive_reward * self.is_healthy
         forward_reward = self._fw_vel_rew_weight * x_velocity
-        # distance = (self.data.qpos[0] - self._target_distance) / self._target_distance
-        distance = (position_after[0] - position_before[0])
-        progress_reward = self._progress_reward_weight * distance
         control_cost = self._ctrl_cost_weight * np.sum(np.square(self.data.ctrl))
         pos_deviation_cost = self._pos_deviation_weight * (self.data.qpos[1] ** 2)
         lateral_velocity_cost = self._lateral_velocity_weight * (y_velocity ** 2)
-        # stand_penalty = -0.5 if x_velocity < 0.2 else 0.0  # Discourage standing
         
         reward = (
-            # health_reward + forward_reward + progress_reward - control_cost - pos_deviation_cost - lateral_velocity_cost + stand_penalty
-            # health_reward + forward_reward + progress_reward - control_cost - pos_deviation_cost - lateral_velocity_cost
-            health_reward + forward_reward + control_cost - pos_deviation_cost - lateral_velocity_cost + progress_reward
+            health_reward + forward_reward + control_cost - pos_deviation_cost - lateral_velocity_cost
         )
 
         if self.data.qpos[0] >= self._target_distance:
@@ -173,11 +162,9 @@ class DarwinOp3Env(MujocoEnv, EzPickle):
         reward_info = {
             "health_reward": health_reward,
             "forward_reward": forward_reward,
-            "progress_reward": progress_reward,
             "control_cost": control_cost,
             "pos_deviation_cost": pos_deviation_cost,
             "lateral_velocity_cost": lateral_velocity_cost,
-            # "stand_penalty": stand_penalty,
         }
 
         return reward, reward_info
