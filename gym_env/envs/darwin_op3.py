@@ -144,12 +144,13 @@ class DarwinOp3Env(MujocoEnv, EzPickle):
         min_z, max_z = self._healthy_z_range
         return min_z < self.data.qpos[2] < max_z
 
-    def _get_rew(self, velocity):
+    def _get_rew(self, velocity, position_before, position_after):
         [x_velocity, y_velocity] = velocity
         health_reward = self._keep_alive_reward * self.is_healthy
         forward_reward = self._fw_vel_rew_weight * x_velocity
         # distance = (self.data.qpos[0] - self._target_distance) / self._target_distance
-        # progress_reward = self._progress_reward_weight * distance
+        distance = (position_after[0] - position_before[0])
+        progress_reward = self._progress_reward_weight * distance
         control_cost = self._ctrl_cost_weight * np.sum(np.square(self.data.ctrl))
         pos_deviation_cost = self._pos_deviation_weight * (self.data.qpos[1] ** 2)
         lateral_velocity_cost = self._lateral_velocity_weight * (y_velocity ** 2)
@@ -158,7 +159,7 @@ class DarwinOp3Env(MujocoEnv, EzPickle):
         reward = (
             # health_reward + forward_reward + progress_reward - control_cost - pos_deviation_cost - lateral_velocity_cost + stand_penalty
             # health_reward + forward_reward + progress_reward - control_cost - pos_deviation_cost - lateral_velocity_cost
-            health_reward + forward_reward + control_cost - pos_deviation_cost - lateral_velocity_cost
+            health_reward + forward_reward + control_cost - pos_deviation_cost - lateral_velocity_cost + progress_reward
         )
 
         if self.data.qpos[0] >= self._target_distance:
@@ -172,7 +173,7 @@ class DarwinOp3Env(MujocoEnv, EzPickle):
         reward_info = {
             "health_reward": health_reward,
             "forward_reward": forward_reward,
-            # "progress_reward": progress_reward,
+            "progress_reward": progress_reward,
             "control_cost": control_cost,
             "pos_deviation_cost": pos_deviation_cost,
             "lateral_velocity_cost": lateral_velocity_cost,
@@ -203,7 +204,7 @@ class DarwinOp3Env(MujocoEnv, EzPickle):
         distance_from_origin = np.linalg.norm(self.data.qpos[0:2], ord=2)
 
         observation = self._get_obs()
-        reward, reward_info = self._get_rew(velocity)
+        reward, reward_info = self._get_rew(velocity, position_before, position_after)
 
         info = {
             "x_position": position_after[0],

@@ -24,7 +24,7 @@ class TensorboardCallback(BaseCallback):
             "distances": [],
             "health_rewards": [],
             "forward_rewards": [],
-            # "progress_rewards": [],
+            "progress_rewards": [],
             "control_costs": [],
             "pos_deviation_costs": [],
             "lateral_velocity_costs": [],
@@ -51,7 +51,7 @@ class TensorboardCallback(BaseCallback):
             self.episode_positions['distances'].append(info['distance_from_origin'])
             self.episode_positions['health_rewards'].append(info['health_reward'])
             self.episode_positions['forward_rewards'].append(info['forward_reward'])
-            # self.episode_positions['progress_rewards'].append(info['progress_reward'])
+            self.episode_positions['progress_rewards'].append(info['progress_reward'])
             self.episode_positions['control_costs'].append(info['control_cost'])
             self.episode_positions['pos_deviation_costs'].append(info['pos_deviation_cost'])
             self.episode_positions['lateral_velocity_costs'].append(info['lateral_velocity_cost'])
@@ -106,8 +106,8 @@ class TensorboardCallback(BaseCallback):
             # self.logger.record('max_episode/forward_reward', np.max(forward_values))
             # self.logger.record('min_episode/forward_reward', np.min(forward_values))
 
-            # progress_values = np.array(self.episode_positions['progress_rewards'])
-            # self.logger.record('mean_episode/progress_reward', np.mean(progress_values))
+            progress_values = np.array(self.episode_positions['progress_rewards'])
+            self.logger.record('mean_episode/progress_reward', np.mean(progress_values))
 
             control_costs = np.array(self.episode_positions['control_costs'])
             self.logger.record('mean_episode/control_cost', np.mean(control_costs))
@@ -132,7 +132,7 @@ class TensorboardCallback(BaseCallback):
             "distances": [],
             "health_rewards": [],
             "forward_rewards": [],
-            # "progress_rewards": [],
+            "progress_rewards": [],
             "control_costs": [],
             "pos_deviation_costs": [],
             "lateral_velocity_costs": [],
