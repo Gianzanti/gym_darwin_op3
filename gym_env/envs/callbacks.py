@@ -8,47 +8,13 @@ class TensorboardCallback(BaseCallback):
     """
 
     def __init__(self, verbose=0):
-        # Those variables will be accessible in the callback
-        # (they are defined in the base class)
-        # The RL model
-        # self.model = None  # type: BaseAlgorithm
-        # An alias for self.model.get_env(), the environment used for training
-        # self.training_env # type: VecEnv
-        # Number of time the callback was called
-        # self.n_calls = 0  # type: int
-        # num_timesteps = n_envs * n times env.step() was called
-        # self.num_timesteps = 0  # type: int
-        # local and global variables
-        # self.locals = {}  # type: Dict[str, Any]
-        # self.globals = {}  # type: Dict[str, Any]
-        # The logger object, used to report things in the terminal
-        # self.logger # type: stable_baselines3.common.logger.Logger
-        # Sometimes, for event callback, it is useful
-        # to have access to the parent object
-        # self.parent = None  # type: Optional[BaseCallback]
         super().__init__(verbose)
-        # self.x_pos = (0,0)
-        # self.y_pos = (0,0)
-        # self.z_pos = (0,0)
-        # self.x_vel = (0,0)
-        # self.y_vel = (0,0)
-        # self.forward_reward = (0,0)
-        # self.distance_traveled = (0,0)
-        # self.rotation_penalty = (0,0)
-        # self.control_cost = (0,0)
-        # print("001 - Tensorboard Callback Initialized")
-        # print("001 - Tensorboard Callback Initialized")
-        # print(f"Num Envs: {self.training_env.num_envs}")
-        # print(self.__dict__)
         self.episode_positions = []
 
     def _on_training_start(self) -> None:
         """
         This method is called before the first rollout starts.
         """
-        # print("002 - Training Started")
-        # print(f"Num Envs: {self.training_env.num_envs}")
-        # self.episode_positions = [[]] * self.training_env.num_envs
         self.episode_positions = {
             "x_positions": [],
             "y_positions": [],
@@ -60,16 +26,10 @@ class TensorboardCallback(BaseCallback):
             "forward_rewards": [],
             "distance_rewards": [],
             "control_costs": [],
-            "side_costs": [],
+            "pos_deviation_costs": [],
+            "lateral_velocity_costs": []
         }
 
-    # def _on_rollout_start(self) -> None:
-    #     """
-    #     A rollout is the collection of environment interaction
-    #     using the current policy.
-    #     This event is triggered before collecting new samples.
-    #     """
-    #     # print("003 - Rollout Started")
 
     def _on_step(self) -> bool:
         """
@@ -92,7 +52,8 @@ class TensorboardCallback(BaseCallback):
             self.episode_positions['forward_rewards'].append(info['forward_reward'])
             self.episode_positions['distance_rewards'].append(info['distance_reward'])
             self.episode_positions['control_costs'].append(info['control_cost'])
-            self.episode_positions['side_costs'].append(info['side_cost'])
+            self.episode_positions['pos_deviation_costs'].append(info['pos_deviation_cost'])
+            self.episode_positions['lateral_velocity_costs'].append(info['lateral_velocity_cost'])
 
 
         return True
@@ -105,7 +66,7 @@ class TensorboardCallback(BaseCallback):
         if self.episode_positions:
             x_values = np.array(self.episode_positions['x_positions'])
             self.logger.record('mean_episode/pos_x', np.mean(x_values))
-            self.logger.record('max_episode/pos_x', np.max(x_values))
+            # self.logger.record('max_episode/pos_x', np.max(x_values))
             # self.logger.record('min_episode/pos_x', np.min(x_values))
 
             y_values = np.array(self.episode_positions['y_positions'])
@@ -120,7 +81,7 @@ class TensorboardCallback(BaseCallback):
 
             x_vel_values = np.array(self.episode_positions['x_velocities'])
             self.logger.record('mean_episode/vel_x', np.mean(x_vel_values))
-            self.logger.record('max_episode/vel_x', np.max(x_vel_values))
+            # self.logger.record('max_episode/vel_x', np.max(x_vel_values))
             # self.logger.record('min_episode/vel_x', np.min(x_vel_values))
 
             y_vel_values = np.array(self.episode_positions['y_velocities'])
@@ -130,7 +91,7 @@ class TensorboardCallback(BaseCallback):
 
             dist_values = np.array(self.episode_positions['distances'])
             self.logger.record('mean_episode/distance', np.mean(dist_values))
-            self.logger.record('max_episode/distance', np.max(dist_values))
+            # self.logger.record('max_episode/distance', np.max(dist_values))
             # self.logger.record('min_episode/distance', np.min(dist_values))
 
             health_values = np.array(self.episode_positions['health_rewards'])
@@ -145,17 +106,21 @@ class TensorboardCallback(BaseCallback):
 
             distance_rewards = np.array(self.episode_positions['distance_rewards'])
             self.logger.record('mean_episode/distance_reward', np.mean(distance_rewards))
-            self.logger.record('max_episode/distance_reward', np.max(distance_rewards))
+            # self.logger.record('max_episode/distance_reward', np.max(distance_rewards))
 
             control_costs = np.array(self.episode_positions['control_costs'])
             self.logger.record('mean_episode/control_cost', np.mean(control_costs))
-            self.logger.record('max_episode/control_cost', np.max(control_costs))
+            # self.logger.record('max_episode/control_cost', np.max(control_costs))
 
             side_costs = np.array(self.episode_positions['side_costs'])
             self.logger.record('mean_episode/side_cost', np.mean(side_costs))
-            self.logger.record('max_episode/side_cost', np.max(side_costs))
+            # self.logger.record('max_episode/side_cost', np.max(side_costs))
 
+            pos_deviation_costs = np.array(self.episode_positions['pos_deviation_costs'])
+            self.logger.record('mean_episode/pos_deviation_cost', np.mean(pos_deviation_costs))
 
+            lateral_velocity_costs = np.array(self.episode_positions['lateral_velocity_costs'])
+            self.logger.record('mean_episode/lateral_velocity_cost', np.mean(lateral_velocity_costs))
 
 
         self.episode_positions = {
@@ -167,14 +132,10 @@ class TensorboardCallback(BaseCallback):
             "distances": [],
             "health_rewards": [],
             "forward_rewards": [],
-            "distance_rewards": [],
             "control_costs": [],
-            "side_costs": [],
+            "pos_deviation_costs": [],
+            "lateral_velocity_costs": []
+
         }
 
-    # def _on_training_end(self) -> None:
-    #     """
-    #     This event is triggered before exiting the `learn()` method.
-    #     """
-    #     # print("006 - Training Ended")
 

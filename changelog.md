@@ -360,3 +360,11 @@
 ## v.0.2.25 - [18/04/2025]
 
 - adding distance reward height
+
+## v.0.2.26 - [18/04/2025]
+
+- adding distance reward height
+
+## v.0.2.27 - [20/04/2025]
+
+- changing reward function to calculate y deviations
