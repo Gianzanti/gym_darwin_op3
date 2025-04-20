@@ -150,7 +150,7 @@ class DarwinOp3Env(MujocoEnv, EzPickle):
         lateral_velocity_cost = self._lateral_velocity_weight * (y_velocity ** 2)
         
         reward = (
-            health_reward + forward_reward + control_cost - pos_deviation_cost - lateral_velocity_cost
+            health_reward + forward_reward - control_cost - pos_deviation_cost - lateral_velocity_cost
         )
 
         if self.data.qpos[0] >= self._target_distance:
