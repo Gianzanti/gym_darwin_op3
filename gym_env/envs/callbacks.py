@@ -28,7 +28,7 @@ class TensorboardCallback(BaseCallback):
             "control_costs": [],
             "pos_deviation_costs": [],
             "lateral_velocity_costs": [],
-            # "stand_penalties": []
+            "stand_penalties": []
         }
 
 
@@ -55,7 +55,7 @@ class TensorboardCallback(BaseCallback):
             self.episode_positions['control_costs'].append(info['control_cost'])
             self.episode_positions['pos_deviation_costs'].append(info['pos_deviation_cost'])
             self.episode_positions['lateral_velocity_costs'].append(info['lateral_velocity_cost'])
-            # self.episode_positions['stand_penalties'].append(info['stand_penalty'])
+            self.episode_positions['stand_penalties'].append(info['stand_penalty'])
 
 
         return True
@@ -119,8 +119,8 @@ class TensorboardCallback(BaseCallback):
             lateral_velocity_costs = np.array(self.episode_positions['lateral_velocity_costs'])
             self.logger.record('mean_episode/lateral_velocity_cost', np.mean(lateral_velocity_costs))
 
-            # stand_penalties = np.array(self.episode_positions['stand_penalties'])
-            # self.logger.record('mean_episode/stand_penalty', np.mean(stand_penalties))
+            stand_penalties = np.array(self.episode_positions['stand_penalties'])
+            self.logger.record('mean_episode/stand_penalty', np.mean(stand_penalties))
 
 
         self.episode_positions = {

@@ -153,12 +153,12 @@ class DarwinOp3Env(MujocoEnv, EzPickle):
         control_cost = self._ctrl_cost_weight * np.sum(np.square(self.data.ctrl))
         pos_deviation_cost = self._pos_deviation_weight * (self.data.qpos[1] ** 2)
         lateral_velocity_cost = self._lateral_velocity_weight * (y_velocity ** 2)
-        # stand_penalty = -0.5 if x_velocity < 0.2 else 0.0  # Discourage standing
+        stand_penalty = -0.5 if x_velocity < 0.2 else 0.0  # Discourage standing
         
         reward = (
             # health_reward + forward_reward + progress_reward - control_cost - pos_deviation_cost - lateral_velocity_cost + stand_penalty
             # health_reward + forward_reward + progress_reward - control_cost - pos_deviation_cost - lateral_velocity_cost
-            health_reward + forward_reward + control_cost - pos_deviation_cost - lateral_velocity_cost
+            health_reward + forward_reward + control_cost - pos_deviation_cost - lateral_velocity_cost + stand_penalty
         )
 
         if self.data.qpos[0] >= self._target_distance:
@@ -176,7 +176,7 @@ class DarwinOp3Env(MujocoEnv, EzPickle):
             "control_cost": control_cost,
             "pos_deviation_cost": pos_deviation_cost,
             "lateral_velocity_cost": lateral_velocity_cost,
-            # "stand_penalty": stand_penalty,
+            "stand_penalty": stand_penalty,
         }
 
         return reward, reward_info
