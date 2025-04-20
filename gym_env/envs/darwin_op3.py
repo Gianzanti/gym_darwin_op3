@@ -141,16 +141,19 @@ class DarwinOp3Env(MujocoEnv, EzPickle):
         min_z, max_z = self._healthy_z_range
         return min_z < self.data.qpos[2] < max_z
 
-    def _get_rew(self, velocity):
+    def _get_rew(self, velocity, position_before, position_after):
         [x_velocity, y_velocity] = velocity
         health_reward = self._keep_alive_reward * self.is_healthy
         forward_reward = self._fw_vel_rew_weight * x_velocity
+        distance_old = abs(position_before[0] - self._target_distance)
+        distance_new = abs(position_after[0] - self._target_distance)
+        progress_reward = (self._fw_vel_rew_weight * 0.3) * (distance_old - distance_new)
         control_cost = self._ctrl_cost_weight * np.sum(np.square(self.data.ctrl))
         pos_deviation_cost = self._pos_deviation_weight * (self.data.qpos[1] ** 2)
         lateral_velocity_cost = self._lateral_velocity_weight * (y_velocity ** 2)
         
         reward = (
-            health_reward + forward_reward - control_cost - pos_deviation_cost - lateral_velocity_cost
+            health_reward + forward_reward + progress_reward - control_cost - pos_deviation_cost - lateral_velocity_cost
         )
 
         if self.data.qpos[0] >= self._target_distance:
@@ -164,6 +167,7 @@ class DarwinOp3Env(MujocoEnv, EzPickle):
         reward_info = {
             "health_reward": health_reward,
             "forward_reward": forward_reward,
+            "progress_reward": progress_reward,
             "control_cost": control_cost,
             "pos_deviation_cost": pos_deviation_cost,
             "lateral_velocity_cost": lateral_velocity_cost,
@@ -182,22 +186,22 @@ class DarwinOp3Env(MujocoEnv, EzPickle):
 
     def step(self, normalized_action):
         # get the current position of the robot, before action
-        xy_position_before = mass_center(self.model, self.data)
+        position_before = mass_center(self.model, self.data)
 
         # denormalize the action to the range of the motors
         action = normalized_action * self._motor_max_torque
         self.do_simulation(action, self.frame_skip)
-        xy_position_after = mass_center(self.model, self.data)
+        position_after = mass_center(self.model, self.data)
 
-        velocity = (xy_position_after - xy_position_before) / self.dt
+        velocity = (position_after - position_before) / self.dt
         distance_from_origin = np.linalg.norm(self.data.qpos[0:2], ord=2)
 
         observation = self._get_obs()
-        reward, reward_info = self._get_rew(velocity)
+        reward, reward_info = self._get_rew(velocity, position_before, position_after)
 
         info = {
-            "x_position": xy_position_after[0],
-            "y_position": xy_position_after[1],
+            "x_position": position_after[0],
+            "y_position": position_after[1],
             "z_position": self.data.qpos[2],
             "orientation": self.data.qpos[3],
             "x_velocity": velocity[0],
