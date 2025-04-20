@@ -37,8 +37,8 @@ class DarwinOp3Env(MujocoEnv, EzPickle):
         pos_deviation_weight: float = 10.0,  # 5e-2,
         lateral_velocity_weight: float = 5.0,  # 5e-2,
         
-        ctrl_cost_weight: float = 1e-1,  # 5e-2,
-        reach_target_reward: float = 10.0,  # 10000.0,
+        ctrl_cost_weight: float = 1e-2,  # 5e-2,
+        reach_target_reward: float = 100.0,  # 10000.0,
         target_distance: float = 5.0,  # 5.0
         
         progress_reward_weight: float = 1.0,  # 0.3,
