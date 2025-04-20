@@ -106,10 +106,6 @@ class TensorboardCallback(BaseCallback):
             self.logger.record('mean_episode/control_cost', np.mean(control_costs))
             # self.logger.record('max_episode/control_cost', np.max(control_costs))
 
-            side_costs = np.array(self.episode_positions['side_costs'])
-            self.logger.record('mean_episode/side_cost', np.mean(side_costs))
-            # self.logger.record('max_episode/side_cost', np.max(side_costs))
-
             pos_deviation_costs = np.array(self.episode_positions['pos_deviation_costs'])
             self.logger.record('mean_episode/pos_deviation_cost', np.mean(pos_deviation_costs))
 
